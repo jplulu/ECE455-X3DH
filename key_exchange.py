@@ -63,7 +63,7 @@ def key_agreement_active(ik_a, ik_b, spk_b, spk_sig_b, opks_b=None, use_opk=True
     opk = None
     if use_opk and len(opks_b) > 0:
         opk = secrets.choice(opks_b)
-        DH4 = diffie_hellman(EK_a_priv, opk)
+        DH4 = diffie_hellman(EK_a_priv, opk.opk)
 
     SK = key_derivation(DH1 + DH2 + DH3 + DH4)
 
@@ -74,7 +74,9 @@ def key_agreement_active(ik_a, ik_b, spk_b, spk_sig_b, opks_b=None, use_opk=True
 
 
 if __name__ == '__main__':
-    publish_keys(5)
+    # publish_keys(5)
     bundle = session.query(ECPublicKey).filter(ECPublicKey.id == 1).first()
-    print(bundle)
-    print(bundle.opks)
+    # print(bundle)
+    # print(bundle.opks)
+    a_priv, a_pub = generate_key_pair()
+    print(key_agreement_active(a_pub, bundle.ik, bundle.spk, bundle.spk_sig, bundle.opks))
