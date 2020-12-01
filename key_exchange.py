@@ -33,11 +33,11 @@ def diffie_hellman(priv_bytes, pub_bytes):
     return X25519PrivateKey.from_private_bytes(priv_bytes).exchange(X25519PublicKey.from_public_bytes(pub_bytes))
 
 
-def key_derivation(KM, info_string):
+def key_derivation(KM):
     hash_function = hashes.SHA256()
     salt = b"\x00" * 32
     F = b"\xFF" * 32
-    info = info_string.encode("ASCII", errors="strict")
+    info = "placeholder".encode("ASCII", errors="strict")
     return HKDF(
         algorithm=hash_function,
         length=32,
@@ -65,8 +65,7 @@ def key_agreement_active(ik_a, ik_b, spk_b, spk_sig_b, opks_b=None, use_opk=True
         opk = secrets.choice(opks_b)
         DH4 = diffie_hellman(EK_a_priv, opk)
 
-    info = "placeholder"
-    SK = key_derivation(DH1 + DH2 + DH3 + DH4, info)
+    SK = key_derivation(DH1 + DH2 + DH3 + DH4)
 
     # TODO: Calculate "associated data" (ad) here
     ad = ik_a + ik_b
