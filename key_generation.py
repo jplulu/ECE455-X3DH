@@ -21,18 +21,21 @@ def generate_key_pair():
 
     return priv, pub
 
-priv = X25519PrivateKey.generate()
-peer_pub = X25519PrivateKey.generate().public_key()
-shared = priv.exchange(peer_pub)
-key = b64encode(shared)
-f = Fernet(key)
-token = f.encrypt(b"This is a secret")
-print(token)
-print(f.decrypt(token))
 
-# priv, pub = generate_key_pair()
-# print(priv, pub)
-# print({
-#     "priv": b64encode(priv).decode("ASCII"),
-#     "pub": b64encode(pub).decode("ASCII")
-# })
+if __name__ == '__main__':
+    # priv = X25519PrivateKey.generate()
+    # peer_pub = X25519PrivateKey.generate().public_key()
+    # shared = priv.exchange(peer_pub)
+    # key = b64encode(shared)
+    # f = Fernet(key)
+    # token = f.encrypt(b"This is a secret")
+    # print(token)
+    # print(f.decrypt(token))
+
+    priv, pub = generate_key_pair()
+    print(type(priv))
+    print(priv, pub)
+    # print({
+    #     "priv": b64encode(priv).decode("ASCII"),
+    #     "pub": b64encode(pub).decode("ASCII")
+    # })
