@@ -64,6 +64,7 @@ def key_agreement_active(ik_a, ik_b, spk_b, spk_sig_b, opks_b=None, use_opk=True
     if use_opk and len(opks_b) > 0:
         opk = secrets.choice(opks_b)
         DH4 = diffie_hellman(EK_a_priv, opk.opk)
+    # TODO: Need to delete opk after use
 
     SK = key_derivation(DH1 + DH2 + DH3 + DH4)
 
