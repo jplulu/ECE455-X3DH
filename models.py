@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Integer, Column, ForeignKey, create_engine, BLOB
-from sqlalchemy.types import Text
+from sqlalchemy.types import Text, JSON
 from sqlalchemy.orm import sessionmaker, relationship
 
 Base = declarative_base()
@@ -35,7 +35,7 @@ class Message(Base):
     id = Column(Integer, primary_key=True)
     receiver_id = Column(Integer, ForeignKey("ecpublickeys.id"))
     sender_id = Column(Integer, ForeignKey("ecpublickeys.id"))
-    content = Column(BLOB)
+    content = Column(JSON)
     
     def __repr__(self):
         return "<Message(id=%s, receiver_id='%s', sender_id=%s, content=%s)>" % (self.id, self.receiver_id, self.sender_id, self.content)
