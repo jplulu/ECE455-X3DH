@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Integer, Column, ForeignKey, create_engine
+from sqlalchemy import Integer, Column, ForeignKey, create_engine, BLOB
 from sqlalchemy.types import Text
 from sqlalchemy.orm import sessionmaker, relationship
 
@@ -29,6 +29,22 @@ class OT_PKey(Base):
     def __repr__(self):
         return "<OT_PKey(id=%s, uid='%s', ot_pkey=%s)>" % (self.id, self.uid, self.ot_pkey)
 
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True)
+    receiver_id = Column(Integer, ForeignKey("ecpublickeys.id"))
+    sender_id = Column(Integer, ForeignKey("ecpublickeys.id"))
+    content = Column(BLOB)
+    
+    def __repr__(self):
+        return "<Message(id=%s, receiver_id='%s', sender_id=%s, content=%s)>" % (self.id, self.receiver_id, self.sender_id, self.content)
+
+def Populate(session):
+    s.add(ECPublicKey(id_key=123, sign_pkey="test1", prekey_sig="presig1"))
+    s.add(ECPublicKey(id_key=234, sign_pkey="test2", prekey_sig="presig2"))
+    s.add(Message(receiver_id=1, sender_id=2, content=bytes("TEST THIS OUT", encoding='utf8')))
+    s.commit()
 
 if __name__ == '__main__':
 
@@ -39,6 +55,7 @@ if __name__ == '__main__':
     s = session()
     Base.metadata.create_all(engine)
 
+    Populate(s)
     # TCP Listening loop here
 
     # if package wants to retrieve info
