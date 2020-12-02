@@ -38,13 +38,14 @@ def key_derivation(KM):
     salt = b"\x00" * 32
     F = b"\xFF" * 32
     info = "placeholder".encode("ASCII", errors="strict")
-    return HKDF(
+    SK = HKDF(
         algorithm=hash_function,
         length=32,
         salt=salt,
         info=info,
         backend=default_backend()
     ).derive(F + KM)
+    return SK
 
 
 def key_agreement_active(ik_a, ik_b, spk_b, spk_sig_b, opks_b=None, use_opk=True):

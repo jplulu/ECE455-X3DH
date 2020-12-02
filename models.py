@@ -51,30 +51,3 @@ class Message(Base):
     def __repr__(self):
         return "<Message(id=%s, receiver_id='%s', sender_id=%s, content=%s)>" % (
             self.id, self.receiver_id, self.sender_id, self.content)
-
-
-if __name__ == '__main__':
-
-    engine = create_engine(
-        'sqlite:///keybundle.db', echo=False)
-    conn = engine.connect()
-    session = sessionmaker(bind=engine)
-    s = session()
-    Base.metadata.create_all(engine)
-
-    # TCP Listening loop here
-
-    # if package wants to retrieve info
-    # user_id = 1  # Take from TCP package
-    # ot_pkey = s.query(OT_PKey).filter_by(uid=user_id).first()
-    # One_pkey = None
-    # if ot_pkey == None:
-    #     prekey = s.query(ECPublicKey).filter_by(id=user_id).first()
-    #     print(prekey.id)
-    # else:
-    #     One_pkey = ot_pkey.ot_pkey
-    #     s.delete(ot_pkey)
-    #     s.commit()
-    # send the otpkey to
-
-    # if package wants to load info

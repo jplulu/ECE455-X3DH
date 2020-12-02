@@ -70,14 +70,14 @@ class OneTimeKeyRepository:
         self.session.add(ot_pkey)
         self.session.commit()
 
-    def get_one_ot_pkey_by_bundle_id(self, id: int) -> OT_PKey:
+    def get_one_ot_pkey_by_bundle_id(self, bundle_id: int) -> OT_PKey:
         """
         Gets one OT_PKey corresponding to the given id
         :param id: the bundle_id
         :return: A single OT_PKey
         """
         result = self.session.query(OT_PKey)\
-            .filter(OT_PKey.bundle_id == id)\
+            .filter(OT_PKey.bundle_id == bundle_id)\
             .first()
         return result
 
@@ -88,6 +88,12 @@ class OneTimeKeyRepository:
         """
         result = self.session.query(OT_PKey)
         return [x for x in result]
+
+    def delete_ot_pkey_by_id(self, id):
+        self.session.query(OT_PKey)\
+            .filter(OT_PKey.id == id)\
+            .delete(synchronize_session=False)
+        self.session.commit()
 
 
 class MessageRepository:

@@ -9,18 +9,16 @@ from sqlalchemy.orm import sessionmaker
 
 # Local imports
 from models import ECPublicKey, OT_PKey, Message
-from util import generate_key_pair, diffie_hellman, key_derivation, decrypt_message, encrypt_message
+from util import diffie_hellman, key_derivation, decrypt_message, encrypt_message
 from repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository
-
+from KeyPair import KeyPair
 
 class User:
     def __init__(self):
-        self.ik_priv = None
-        self.ik_pub = None
-        self.spk_priv = None
-        self.spk_pub = None
-        self.key_priv = None
-        self.key_pub = None
+        self.ik = None
+        self.spk = None
+        self.key = None
+        self.opk = []
         self.public_key_repository = PublicKeyRepository()
         self.one_time_repository = OneTimeKeyRepository()
         self.message_repository = MessageRepository()
@@ -31,9 +29,9 @@ class User:
         Sets the keys for a new user
         :return: None
         """
-        self.ik_priv, self.ik_pub = generate_key_pair()
-        self.spk_priv, self.spk_pub = generate_key_pair()
-        self.key_priv, self.key_pub = generate_key_pair()
+        self.ik = KeyPair.generate_key_pair()
+        self.spk = KeyPair.generate_key_pair()
+        self.key = KeyPair.generate_key_pair()
 
     def publish_keys(self, opk_count):
         """
@@ -41,31 +39,35 @@ class User:
         :param opk_count: Number of One time pre-keys to create when the public key bundle is published
         :return: None
         """
-        spk_sig = XEdDSA25519(mont_priv=self.ik_priv).sign(self.spk_pub)
-        ec_public_key = ECPublicKey(self.ik_pub, self.spk_pub, spk_sig)
+        spk_sig = XEdDSA25519(mont_priv=self.ik.private_key).sign(self.spk.private_key)
+        ec_public_key = ECPublicKey(self.ik.public_key, self.spk.public_key, spk_sig)
         while opk_count > 0:
-            ot_pkey = OT_PKey(self.key_pub)
-            ec_public_key.opks.append(ot_pkey)  # ???Add ot_pkey to bundle???
+            ot_pkey_set = KeyPair.generate_key_pair()
+            self.opk.append(ot_pkey_set)    # Append KeyPair to list of opks
+            ec_public_key.opks.append(ot_pkey_set.public_key)
             opk_count -= 1
 
-        # TEMPORARY FIX: set user.id to the id of the bundle
         # TODO: Authentication
 
         # Insert public keys into table
         self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
 
-    def key_agreement_active(self, ec_public_key: ECPublicKey, opks_b=None, use_opk=True):
+    def key_agreement_active(self, id: int, use_opk: bool = True):
         """
         Generates a Shared Key, SK using the public key bundle
-        :param ec_public_key: ECPublicKey for the desired receiver
-        :param opks_b: list of One time pre-keys?
-        :param use_opk: Use the pre-key
+        :param use_opk:
+        :param id: Use the pre-key
         :return: relevant data for first message
         """
+
+        ec_public_key = self._retrieve_key_bundle_for_handshake_by_id(id=id)
+
         # Local vars
         ik_b = ec_public_key.ik
         spk_b = ec_public_key.spk
         spk_sig_b = ec_public_key.spk_sig
+
+
 
         # Verity the signature
         if not XEdDSA25519(mont_pub=ik_b).verify(
@@ -75,27 +77,28 @@ class User:
             print("The signature of this public bundle's spk could not be verified")
             return "The signature of this public bundle's spk could not be verified"
 
-        EK_a_priv, EK_a_pub = generate_key_pair()
-        DH1 = diffie_hellman(self.ik_pub, spk_b)
-        DH2 = diffie_hellman(EK_a_pub, ik_b)
-        DH3 = diffie_hellman(EK_a_pub, spk_b)
+        EK = KeyPair.generate_key_pair()
+        DH1 = diffie_hellman(self.ik.public_key, spk_b)
+        DH2 = diffie_hellman(EK.public_key, ik_b)
+        DH3 = diffie_hellman(EK.public_key, spk_b)
         DH4 = b""
 
         opk = None
-        if use_opk and len(opks_b) > 0:
-            opk = secrets.choice(opks_b)
-            DH4 = diffie_hellman(EK_a_priv, opk.opk)
+        if use_opk:
+            opk = self.one_time_repository.get_one_ot_pkey_by_bundle_id(ec_public_key.id)
+            if opk is not None:
+                DH4 = diffie_hellman(EK.private_key, opk.opk)
+                self.one_time_repository.delete_ot_pkey_by_id(opk.id)  # delete opk after use
 
-        # TODO: Need to delete opk after use
 
         SK = key_derivation(DH1 + DH2 + DH3 + DH4)
 
         # TODO: Calculate "associated data" (ad) here
-        ad = self.ik_pub + ik_b
+        ad = self.ik.public_key + ik_b
 
-        return SK, ad, self.ik_pub, EK_a_pub, opk, spk_b
+        return SK, ad, self.ik.public_key, EK.public_key, opk, spk_b
 
-    def retrieve_key_bundle_for_handshake_by_id(self, id: int) -> ECPublicKey:
+    def _retrieve_key_bundle_for_handshake_by_id(self, id: int) -> ECPublicKey:
         """
         Gets the public key bundle for a user with the given id
         :param id: id for the public key bundle
@@ -113,10 +116,7 @@ if __name__ == "__main__":
 
     # Sender gets the bundle and creates the shared key
     sender = User()
-    bundle = sender.retrieve_key_bundle_for_handshake_by_id(23)  # param should be receiver.id
-    SK, ad, ik_pub, EK_a_pub, opk, spk_b = sender.key_agreement_active(ec_public_key=bundle,
-                                                                       opks_b=None,
-                                                                       use_opk=False)
+    SK, ad, ik_pub, EK_a_pub, opk, spk_b = sender.key_agreement_active(id=24, use_opk=True)
 
     enc = encrypt_message("NaM STFU WEEBS NaM", SK)
     print(enc)

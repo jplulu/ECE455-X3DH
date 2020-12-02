@@ -7,26 +7,7 @@ from cryptography.fernet import Fernet
 from base64 import b64encode, b64decode
 
 
-def generate_key_pair() -> (bytes, bytes):
-    """
-    Generates a public/private key pair
-    :return: the key pair
-    """
-    private_key = X25519PrivateKey.generate()
-    public_key = private_key.public_key()
 
-    priv = private_key.private_bytes(
-        encoding=serialization.Encoding.Raw,
-        format=serialization.PrivateFormat.Raw,
-        encryption_algorithm=serialization.NoEncryption()
-    )
-
-    pub = public_key.public_bytes(
-        encoding=serialization.Encoding.Raw,
-        format=serialization.PublicFormat.Raw
-    )
-
-    return priv, pub
 
 
 def diffie_hellman(priv_bytes: bytes, pub_bytes: bytes) -> bytes:
