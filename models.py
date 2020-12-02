@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Integer, Column, ForeignKey, create_engine, BLOB
-from sqlalchemy.types import Text, JSON, LargeBinary
+from sqlalchemy import Integer, Column, ForeignKey, create_engine, BLOB, MetaData
+from sqlalchemy.types import Text, JSON, LargeBinary, String
 from sqlalchemy.orm import sessionmaker, relationship
 
 Base = declarative_base()
@@ -46,35 +46,18 @@ class Message(Base):
     id = Column(Integer, primary_key=True)
     receiver_id = Column(Integer, ForeignKey("ecpublickeys.id"))
     sender_id = Column(Integer, ForeignKey("ecpublickeys.id"))
-    content = Column(JSON)
+    sender_ik = Column(LargeBinary)
+    sender_ek = Column(LargeBinary)
+    message = Column(LargeBinary)
 
     def __repr__(self):
-        return "<Message(id=%s, receiver_id='%s', sender_id=%s, content=%s)>" % (
-            self.id, self.receiver_id, self.sender_id, self.content)
+        return "<Message(id=%s, receiver_id='%s', sender_id=%s, sender_ik=%s, sender_ek=%s, message=%s)>" % (
+            self.id, self.receiver_id, self.sender_id, self.sender_ik, self.sender_ek, self.message)
 
 
-if __name__ == '__main__':
-
-    engine = create_engine(
-        'sqlite:///keybundle.db', echo=False)
-    conn = engine.connect()
-    session = sessionmaker(bind=engine)
-    s = session()
+if __name__ == "__main__":
+    engine = create_engine('mysql://root:123456@localhost:3306/keybundle')  # connect to server
+    engine.execute("DROP DATABASE keybundle;")
+    engine.execute("CREATE DATABASE keybundle;")
+    engine.execute("USE keybundle;")
     Base.metadata.create_all(engine)
-
-    # TCP Listening loop here
-
-    # if package wants to retrieve info
-    # user_id = 1  # Take from TCP package
-    # ot_pkey = s.query(OT_PKey).filter_by(uid=user_id).first()
-    # One_pkey = None
-    # if ot_pkey == None:
-    #     prekey = s.query(ECPublicKey).filter_by(id=user_id).first()
-    #     print(prekey.id)
-    # else:
-    #     One_pkey = ot_pkey.ot_pkey
-    #     s.delete(ot_pkey)
-    #     s.commit()
-    # send the otpkey to
-
-    # if package wants to load info
