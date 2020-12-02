@@ -20,7 +20,6 @@ class User:
     def __init__(self):
         self.ik = None
         self.spk = None
-        self.key = None
         self.opk = []
         self.public_key_repository = PublicKeyRepository()
         self.one_time_repository = OneTimeKeyRepository()
@@ -34,7 +33,6 @@ class User:
         """
         self.ik = KeyPair.generate_key_pair()
         self.spk = KeyPair.generate_key_pair()
-        self.key = KeyPair.generate_key_pair()
 
     def publish_keys(self, opk_count):
         """
@@ -42,12 +40,13 @@ class User:
         :param opk_count: Number of One time pre-keys to create when the public key bundle is published
         :return: None
         """
-        spk_sig = XEdDSA25519(mont_priv=self.ik.private_key).sign(self.spk.private_key)
+        spk_sig = XEdDSA25519(mont_priv=self.ik.private_key).sign(self.spk.public_key)
         ec_public_key = ECPublicKey(self.ik.public_key, self.spk.public_key, spk_sig)
+
         while opk_count > 0:
             ot_pkey_set = KeyPair.generate_key_pair()
             self.opk.append(ot_pkey_set)    # Append KeyPair to list of opks
-            ec_public_key.opks.append(ot_pkey_set.public_key)
+            ec_public_key.opks.append(OT_PKey(opk=ot_pkey_set.public_key))
             opk_count -= 1
 
         # TODO: Authentication
@@ -64,6 +63,7 @@ class User:
         """
 
         ec_public_key = self._retrieve_key_bundle_for_handshake_by_id(id=id)
+        # print(ec_public_key)
 
         # Local vars
         ik_b = ec_public_key.ik
@@ -81,9 +81,9 @@ class User:
             return "The signature of this public bundle's spk could not be verified"
 
         EK = KeyPair.generate_key_pair()
-        DH1 = diffie_hellman(self.ik.public_key, spk_b)
-        DH2 = diffie_hellman(EK.public_key, ik_b)
-        DH3 = diffie_hellman(EK.public_key, spk_b)
+        DH1 = diffie_hellman(self.ik.private_key, spk_b)
+        DH2 = diffie_hellman(EK.private_key, ik_b)
+        DH3 = diffie_hellman(EK.private_key, spk_b)
         DH4 = b""
 
         opk = None
@@ -94,24 +94,53 @@ class User:
                 self.one_time_repository.delete_ot_pkey_by_id(opk.id)  # delete opk after use
 
 
+        # Create the shared key
         SK = key_derivation(DH1 + DH2 + DH3 + DH4)
 
-        # TODO: Calculate "associated data" (ad) here
+        # Calculate the associated data
         ad = self.ik.public_key + ik_b
 
-
+        # Encrypt initial message with the shared key, including the associated data
+        cryptor = AEAD(b64encode(SK))
+        msg = cryptor.encrypt(b"NaM STFU WEEBS NaM", ad)
         message = Message(receiver_id=ec_public_key.id,
-                          sender_id=23,
+                          sender_id=1,
                           sender_ik=self.ik.public_key,
                           sender_ek=EK.public_key,
-                          message="NaM STFU WEEBS NaM")
+                          message=msg)
+
+        # Post message to server with the correct key bundle
         self.message_repository.insert_message(message=message)
 
-        return SK, ad, self.ik.public_key, EK.public_key, opk, spk_b
+        # return SK, ad, self.ik.public_key, EK.public_key, opk, spk_b
 
-    def complete_handshake(self, id: int, use_opk: bool = True):
+    def complete_handshake(self, id: int, use_opk: bool = False):
+        # Get the initiate handshake message
         message = self.message_repository.get_messages_by_receiver_id(receiver_id=id)
-        self._check_associated_data(message)
+
+
+        # Perform Diffie-Hellman to get Shared Key
+        DH1 = diffie_hellman(self.spk.private_key, message.sender_ik)
+        DH2 = diffie_hellman(self.ik.private_key, message.sender_ek)
+        DH3 = diffie_hellman(self.spk.private_key, message.sender_ek)
+        DH4 = b""
+
+        opk = None
+        if use_opk:
+            pass
+
+
+        # Calculate the shared key
+        SK = key_derivation(DH1 + DH2 + DH3 + DH4)
+
+        # Calculate the associated data
+        ad = message.sender_ik + self.ik.public_key
+        msg = self._check_associated_data(message=message.message, associated_data=ad, shared_key=SK)
+        if msg is None:
+            return None
+        else:
+            print(msg)
+            return SK
 
     def _retrieve_key_bundle_for_handshake_by_id(self, id: int) -> ECPublicKey:
         """
@@ -122,14 +151,19 @@ class User:
         ec_public_key = self.public_key_repository.get_public_key_bundle_by_id(id=id)
         return ec_public_key
 
-    def _check_associated_data(self, message):
+    def _check_associated_data(self, message: bytes, associated_data: bytes, shared_key: bytes) -> str:
         """
         Checks the associated data of the message initiating the handshake
         :param message: the Message
-        :return: True if matching, else False
+        :return: True if matching, else False(
         """
-        return True
-
+        cryptor = AEAD(b64encode(shared_key))
+        try:
+            dec = cryptor.decrypt(message, associated_data)
+        except ValueError as e:
+            print(e)
+            return None
+        return dec
     def save_keys(self, filename: str) -> None:
         """
         Saves the public and private identity and pre-keys to a file
@@ -138,7 +172,8 @@ class User:
         """
         text = ""
         text += "identity key, {}, {}\n".format(self.ik.private_key, self.ik.public_key)
-        text += "pre-key, {}, {}".format(self.spk.private_key, self.spk.public_key)
+        text += "pre-key, {}, {}\n".format(self.spk.private_key, self.spk.public_key)
+        text += "one-time, {}".format(self.opk)
         with open(filename, 'w') as f:
             f.write(text)
 
@@ -152,8 +187,8 @@ class User:
             text = f.read().split("\n")
             ik = text[0].split(",")
             spk = text[1].split(",")
-            self.ik = KeyPair(private_key=ik[0], public_key=ik[1])
-            self.spk = KeyPair(private_key=spk[0], public_key=spk[1])
+            self.ik = KeyPair(private_key=b64encode(ik[0]), public_key=b64encode(ik[1]))
+            self.spk = KeyPair(private_key=b64encode(spk[0]), public_key=b64encode(spk[1]))
 
 
 if __name__ == "__main__":
@@ -163,13 +198,18 @@ if __name__ == "__main__":
 
     # Sender gets the bundle and creates the shared key
     sender = User()
-    sender.load_keys('test.txt')
-    SK, ad, ik_pub, EK_a_pub, opk, spk_b = sender.initiate_handshake(id=24, use_opk=False)
+    sender.publish_keys(opk_count=0)
+    # sender.save_keys('sender.txt')
+    # sender.load_keys('sender.txt')
+
+    receiver = User()
+    receiver.publish_keys(opk_count=0)
+    # print(PublicKeyRepository().get_all_public_key_bundles())
+    # receiver.save_keys('receiver.txt')
+    # receiver.load_keys('receiver.txt')
+    sender.initiate_handshake(id=2, use_opk=False)
+    receiver.complete_handshake(id=2)
 
 
 
-    # cryptor = AEAD(b64encode(SK))
-    # ct = cryptor.encrypt(b"Hello, World!", ad)
-    # print(ct)
-    # test = cryptor.decrypt(ct, ik_pub + sender.ik.public_key)
-    # print(test)
+

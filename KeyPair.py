@@ -1,12 +1,12 @@
-
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
 from cryptography.hazmat.primitives import serialization
+from base64 import b64encode, b64decode
 
 
 class KeyPair:
     def __init__(self, private_key, public_key):
-        self.private_key = public_key
-        self.public_key = private_key
+        self.private_key = private_key
+        self.public_key = public_key
 
     @classmethod
     def generate_key_pair(cls) -> (bytes, bytes):

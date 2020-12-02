@@ -104,7 +104,7 @@ class MessageRepository:
         self.session.add(message)
         self.session.commit()
 
-    def get_messages_by_receiver_id(self, receiver_id: int) -> List[Message]:
+    def get_messages_by_receiver_id(self, receiver_id: int) -> Message:
         result = self.session.query(Message)\
             .filter(Message.receiver_id == receiver_id)\
             .first()

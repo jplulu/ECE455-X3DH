@@ -48,7 +48,7 @@ class Message(Base):
     sender_id = Column(Integer, ForeignKey("ecpublickeys.id"))
     sender_ik = Column(LargeBinary)
     sender_ek = Column(LargeBinary)
-    message = Column(String(100))
+    message = Column(LargeBinary)
 
     def __repr__(self):
         return "<Message(id=%s, receiver_id='%s', sender_id=%s, sender_ik=%s, sender_ek=%s, message=%s)>" % (
@@ -57,4 +57,7 @@ class Message(Base):
 
 if __name__ == "__main__":
     engine = create_engine('mysql://root:123456@localhost:3306/keybundle')  # connect to server
+    engine.execute("DROP DATABASE keybundle;")
+    engine.execute("CREATE DATABASE keybundle;")
+    engine.execute("USE keybundle;")
     Base.metadata.create_all(engine)
