@@ -29,3 +29,8 @@ class KeyPair:
         )
 
         return cls(private_key=private_key, public_key=public_key)
+
+    def __repr__(self):
+        return (
+            "<KeyPair(private_key={}, public_key={})>".format(self.private_key, self.public_key)
+        )

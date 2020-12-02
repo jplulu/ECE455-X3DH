@@ -15,6 +15,7 @@ from util import diffie_hellman, key_derivation, decrypt_message, encrypt_messag
 from repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository
 from KeyPair import KeyPair
 
+
 class User:
     def __init__(self):
         self.ik = None
@@ -129,6 +130,32 @@ class User:
         """
         return True
 
+    def save_keys(self, filename: str) -> None:
+        """
+        Saves the public and private identity and pre-keys to a file
+        :param filename: file to save the keys
+        :return:None
+        """
+        text = ""
+        text += "identity key, {}, {}\n".format(self.ik.private_key, self.ik.public_key)
+        text += "pre-key, {}, {}".format(self.spk.private_key, self.spk.public_key)
+        with open(filename, 'w') as f:
+            f.write(text)
+
+    def load_keys(self, filename: str) -> None:
+        """
+        Loads public and private keys that were stored in a file
+        :param filename: file to load keys
+        :return: None
+        """
+        with open(filename, 'r') as f:
+            text = f.read().split("\n")
+            ik = text[0].split(",")
+            spk = text[1].split(",")
+            self.ik = KeyPair(private_key=ik[0], public_key=ik[1])
+            self.spk = KeyPair(private_key=spk[0], public_key=spk[1])
+
+
 if __name__ == "__main__":
 
     # Receiver publishes keys to the server
@@ -136,6 +163,7 @@ if __name__ == "__main__":
 
     # Sender gets the bundle and creates the shared key
     sender = User()
+    sender.load_keys('test.txt')
     SK, ad, ik_pub, EK_a_pub, opk, spk_b = sender.initiate_handshake(id=24, use_opk=False)
 
 
@@ -145,5 +173,3 @@ if __name__ == "__main__":
     # print(ct)
     # test = cryptor.decrypt(ct, ik_pub + sender.ik.public_key)
     # print(test)
-    receiver = User()
-    receiver.complete_handshake(id=24, use_opk=False)
