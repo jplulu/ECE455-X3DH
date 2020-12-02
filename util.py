@@ -64,3 +64,5 @@ def decrypt_message(message_bytes: bytes, key: bytes) -> str:
     f = Fernet(key)
     message_str = f.decrypt(message_bytes).decode("ascii")
     return message_str
+
+

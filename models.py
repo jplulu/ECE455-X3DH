@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Integer, Column, ForeignKey, create_engine, BLOB
-from sqlalchemy.types import Text, JSON, LargeBinary
+from sqlalchemy import Integer, Column, ForeignKey, create_engine, BLOB, MetaData
+from sqlalchemy.types import Text, JSON, LargeBinary, String
 from sqlalchemy.orm import sessionmaker, relationship
 
 Base = declarative_base()
@@ -46,8 +46,15 @@ class Message(Base):
     id = Column(Integer, primary_key=True)
     receiver_id = Column(Integer, ForeignKey("ecpublickeys.id"))
     sender_id = Column(Integer, ForeignKey("ecpublickeys.id"))
-    content = Column(JSON)
+    sender_ik = Column(LargeBinary)
+    sender_ek = Column(LargeBinary)
+    message = Column(String(100))
 
     def __repr__(self):
-        return "<Message(id=%s, receiver_id='%s', sender_id=%s, content=%s)>" % (
-            self.id, self.receiver_id, self.sender_id, self.content)
+        return "<Message(id=%s, receiver_id='%s', sender_id=%s, sender_ik=%s, sender_ek=%s, message=%s)>" % (
+            self.id, self.receiver_id, self.sender_id, self.sender_ik, self.sender_ek, self.message)
+
+
+if __name__ == "__main__":
+    engine = create_engine('mysql://root:123456@localhost:3306/keybundle')  # connect to server
+    Base.metadata.create_all(engine)

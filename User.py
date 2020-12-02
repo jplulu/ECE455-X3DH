@@ -6,6 +6,8 @@ from cryptography.hazmat.backends import default_backend
 from xeddsa.implementations import XEdDSA25519
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from base64 import b64encode, b64decode
+from aead import AEAD
 
 # Local imports
 from models import ECPublicKey, OT_PKey, Message
@@ -52,7 +54,7 @@ class User:
         # Insert public keys into table
         self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
 
-    def key_agreement_active(self, id: int, use_opk: bool = True):
+    def initiate_handshake(self, id: int, use_opk: bool = True):
         """
         Generates a Shared Key, SK using the public key bundle
         :param use_opk:
@@ -96,7 +98,19 @@ class User:
         # TODO: Calculate "associated data" (ad) here
         ad = self.ik.public_key + ik_b
 
+
+        message = Message(receiver_id=ec_public_key.id,
+                          sender_id=23,
+                          sender_ik=self.ik.public_key,
+                          sender_ek=EK.public_key,
+                          message="NaM STFU WEEBS NaM")
+        self.message_repository.insert_message(message=message)
+
         return SK, ad, self.ik.public_key, EK.public_key, opk, spk_b
+
+    def complete_handshake(self, id: int, use_opk: bool = True):
+        message = self.message_repository.get_messages_by_receiver_id(receiver_id=id)
+        self._check_associated_data(message)
 
     def _retrieve_key_bundle_for_handshake_by_id(self, id: int) -> ECPublicKey:
         """
@@ -107,18 +121,29 @@ class User:
         ec_public_key = self.public_key_repository.get_public_key_bundle_by_id(id=id)
         return ec_public_key
 
+    def _check_associated_data(self, message):
+        """
+        Checks the associated data of the message initiating the handshake
+        :param message: the Message
+        :return: True if matching, else False
+        """
+        return True
 
 if __name__ == "__main__":
 
     # Receiver publishes keys to the server
-    # receiver = User()
     # receiver.publish_keys(opk_count=1)
 
     # Sender gets the bundle and creates the shared key
     sender = User()
-    SK, ad, ik_pub, EK_a_pub, opk, spk_b = sender.key_agreement_active(id=24, use_opk=True)
+    SK, ad, ik_pub, EK_a_pub, opk, spk_b = sender.initiate_handshake(id=24, use_opk=False)
 
-    enc = encrypt_message("NaM STFU WEEBS NaM", SK)
-    print(enc)
-    dec = decrypt_message(enc, SK)
-    print(dec)
+
+
+    # cryptor = AEAD(b64encode(SK))
+    # ct = cryptor.encrypt(b"Hello, World!", ad)
+    # print(ct)
+    # test = cryptor.decrypt(ct, ik_pub + sender.ik.public_key)
+    # print(test)
+    receiver = User()
+    receiver.complete_handshake(id=24, use_opk=False)

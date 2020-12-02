@@ -106,8 +106,9 @@ class MessageRepository:
 
     def get_messages_by_receiver_id(self, receiver_id: int) -> List[Message]:
         result = self.session.query(Message)\
-            .filter(Message.receiver_id == receiver_id)
-        return [x for x in result]
+            .filter(Message.receiver_id == receiver_id)\
+            .first()
+        return result
 
     def get_messages_by_sender_id(self, sender_id: int) -> List[Message]:
         result = self.session.query(Message)\
@@ -148,3 +149,4 @@ def create_tables(meta, engine):
     )
 
     meta.create_all(engine)
+
