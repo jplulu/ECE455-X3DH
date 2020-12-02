@@ -135,7 +135,7 @@ class User:
 
         # Calculate the associated data
         ad = message.sender_ik + self.ik.public_key
-        msg = self._check_associated_data(message=message.message, associated_data=ad, shared_key=SK)
+        msg = self._check_associated_data(message=message.message, associated_data=ad, shared_key=SK)g
         if msg is None:
             return None
         else:
