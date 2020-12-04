@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from sqlalchemy.dialects.mysql import TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Integer, Column, ForeignKey, create_engine, BLOB, MetaData
 from sqlalchemy.types import Text, JSON, LargeBinary, String
@@ -48,7 +51,9 @@ class Message(Base):
     sender_id = Column(Integer, ForeignKey("ecpublickeys.id"))
     sender_ik = Column(LargeBinary)
     sender_ek = Column(LargeBinary)
+    opk_used = Column(LargeBinary)
     message = Column(LargeBinary)
+    timestamp = Column('timestamp', TIMESTAMP(timezone=False), nullable=False, default=datetime.now())
 
     def __repr__(self):
         return "<Message(id=%s, receiver_id='%s', sender_id=%s, sender_ik=%s, sender_ek=%s, message=%s)>" % (
@@ -56,7 +61,7 @@ class Message(Base):
 
 
 if __name__ == "__main__":
-    engine = create_engine('mysql://root:123456@localhost:3306/keybundle')  # connect to server
+    engine = create_engine('mysql://root:password@127.0.0.1:3306/keybundle')  # connect to server
     engine.execute("DROP DATABASE keybundle;")
     engine.execute("CREATE DATABASE keybundle;")
     engine.execute("USE keybundle;")

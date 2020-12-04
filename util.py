@@ -1,13 +1,9 @@
-from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
 from cryptography.fernet import Fernet
 from base64 import b64encode, b64decode
-
-
-
 
 
 def diffie_hellman(priv_bytes: bytes, pub_bytes: bytes) -> bytes:
@@ -64,5 +60,3 @@ def decrypt_message(message_bytes: bytes, key: bytes) -> str:
     f = Fernet(key)
     message_str = f.decrypt(message_bytes).decode("ascii")
     return message_str
-
-

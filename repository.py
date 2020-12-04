@@ -1,16 +1,14 @@
 from __future__ import annotations
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Table, Column, Integer, MetaData, LargeBinary, ForeignKey, JSON
 from typing import List
 
 from models import ECPublicKey, OT_PKey, Message
 
-
 # engine = create_engine('sqlite:///keybundle.db', echo=False)
 # Session = sessionmaker(bind=engine)
 # session = Session()
-engine = create_engine('mysql://root:123456@localhost:3306/keybundle')  # connect to server
+engine = create_engine('mysql://root:password@localhost:3306/keybundle')  # connect to server
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -42,8 +40,8 @@ class PublicKeyRepository:
         :param id: the id for the desired public key bundle
         :return: the public key bundle
         """
-        result = self.session.query(ECPublicKey)\
-            .filter(ECPublicKey.id == id)\
+        result = self.session.query(ECPublicKey) \
+            .filter(ECPublicKey.id == id) \
             .first()
         return result
 
@@ -52,7 +50,7 @@ class PublicKeyRepository:
         clears the ecpublickeys table
         :return: None
         """
-        self.session.query(ECPublicKey)\
+        self.session.query(ECPublicKey) \
             .delete(synchronize_session=False)
         self.session.commit()
 
@@ -76,8 +74,8 @@ class OneTimeKeyRepository:
         :param id: the bundle_id
         :return: A single OT_PKey
         """
-        result = self.session.query(OT_PKey)\
-            .filter(OT_PKey.bundle_id == bundle_id)\
+        result = self.session.query(OT_PKey) \
+            .filter(OT_PKey.bundle_id == bundle_id) \
             .first()
         return result
 
@@ -90,8 +88,8 @@ class OneTimeKeyRepository:
         return [x for x in result]
 
     def delete_ot_pkey_by_id(self, id):
-        self.session.query(OT_PKey)\
-            .filter(OT_PKey.id == id)\
+        self.session.query(OT_PKey) \
+            .filter(OT_PKey.id == id) \
             .delete(synchronize_session=False)
         self.session.commit()
 
@@ -105,48 +103,54 @@ class MessageRepository:
         self.session.commit()
 
     def get_messages_by_receiver_id(self, receiver_id: int) -> Message:
-        result = self.session.query(Message)\
-            .filter(Message.receiver_id == receiver_id)\
+        result = self.session.query(Message) \
+            .filter(Message.receiver_id == receiver_id) \
             .first()
         return result
 
     def get_messages_by_sender_id(self, sender_id: int) -> List[Message]:
-        result = self.session.query(Message)\
+        result = self.session.query(Message) \
             .filter(Message.sender_id == sender_id)
         return [x for x in result]
 
+    def get_handshake_message_by_sender_and_receiver(self, sender_id, receiver_id):
+        result = self.session.query(Message).filter(
+            Message.sender_id == sender_id,
+            Message.receiver_id == receiver_id,
+            Message.sender_ik.isnot(None)
+        ).first()
+        return result
 
 
-def create_tables(meta, engine):
-    """
-    Creates the three tables
-    :param meta: MetaData
-    :param engine: SQLAlchemy engine
-    :return: None
-    """
-    ecpublickeys = Table(
-        'ecpublickeys', meta,
-        Column('id', Integer, primary_key=True),
-        Column('ik', LargeBinary),
-        Column('spk', LargeBinary),
-        Column('spk_sig', LargeBinary)
-    )
-
-    ot_pkeys = Table(
-        'ot_pkeys', meta,
-        Column('id', Integer, primary_key=True),
-        Column('opk', LargeBinary),
-        Column('bundle_id', Integer, ForeignKey('ecpublickeys.id'))
-    )
-
-    messages = Table(
-        'messages', meta,
-        Column('id', Integer, primary_key=True),
-        Column('receiver_id', Integer, ForeignKey("ecpublickeys.id")),
-        Column('sender_id', Integer, ForeignKey("ecpublickeys.id")),
-        Column('content', JSON)
-
-    )
-
-    meta.create_all(engine)
-
+# def create_tables(meta, engine):
+#     """
+#     Creates the three tables
+#     :param meta: MetaData
+#     :param engine: SQLAlchemy engine
+#     :return: None
+#     """
+#     ecpublickeys = Table(
+#         'ecpublickeys', meta,
+#         Column('id', Integer, primary_key=True),
+#         Column('ik', LargeBinary),
+#         Column('spk', LargeBinary),
+#         Column('spk_sig', LargeBinary)
+#     )
+#
+#     ot_pkeys = Table(
+#         'ot_pkeys', meta,
+#         Column('id', Integer, primary_key=True),
+#         Column('opk', LargeBinary),
+#         Column('bundle_id', Integer, ForeignKey('ecpublickeys.id'))
+#     )
+#
+#     messages = Table(
+#         'messages', meta,
+#         Column('id', Integer, primary_key=True),
+#         Column('receiver_id', Integer, ForeignKey("ecpublickeys.id")),
+#         Column('sender_id', Integer, ForeignKey("ecpublickeys.id")),
+#         Column('content', JSON)
+#
+#     )
+#
+#     meta.create_all(engine)
