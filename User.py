@@ -12,12 +12,13 @@ from aead import AEAD
 # Local imports
 from models import ECPublicKey, OT_PKey, Message
 from util import diffie_hellman, key_derivation, decrypt_message, encrypt_message
-from repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository
+from repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository, existing_ik
 from KeyPair import KeyPair
 
 
 class User:
-    def __init__(self):
+    def __init__(self, login):
+        self.login = login
         self.ik = None
         self.spk = None
         self.opk = []
@@ -50,9 +51,12 @@ class User:
             opk_count -= 1
 
         # TODO: Authentication
-
+        ik_match = existing_ik(self.login, self.ik.public_key)
         # Insert public keys into table
-        self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
+        if ik_match == True:
+            self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
+        else:
+            print("Error: Mismatched identity key")
 
     def initiate_handshake(self, id: int, use_opk: bool = True):
         """
@@ -135,7 +139,7 @@ class User:
 
         # Calculate the associated data
         ad = message.sender_ik + self.ik.public_key
-        msg = self._check_associated_data(message=message.message, associated_data=ad, shared_key=SK)g
+        msg = self._check_associated_data(message=message.message, associated_data=ad, shared_key=SK)
         if msg is None:
             return None
         else:
@@ -183,13 +187,15 @@ class User:
         :param filename: file to load keys
         :return: None
         """
-        with open(filename, 'r') as f:
-            text = f.read().split("\n")
-            ik = text[0].split(",")
-            spk = text[1].split(",")
-            self.ik = KeyPair(private_key=b64encode(ik[0]), public_key=b64encode(ik[1]))
-            self.spk = KeyPair(private_key=b64encode(spk[0]), public_key=b64encode(spk[1]))
-
+        try:
+            with open(filename, 'r') as f:
+                text = f.read().split("\n")
+                ik = text[0].split(",")
+                spk = text[1].split(",")
+                self.ik = KeyPair(private_key=b64encode(ik[1]), public_key=b64encode(ik[2]))
+                self.spk = KeyPair(private_key=b64encode(spk[1]), public_key=b64encode(spk[2]))
+        except FileNotFoundError:
+            print("Cannot find key file")
 
 if __name__ == "__main__":
 
