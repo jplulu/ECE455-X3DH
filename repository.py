@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from typing import List
 
-from models import ECPublicKey, OT_PKey, Message
+from models import ECPublicKey, OT_PKey, Message, Login
 
 # engine = create_engine('sqlite:///keybundle.db', echo=False)
 # Session = sessionmaker(bind=engine)
@@ -154,3 +154,16 @@ class MessageRepository:
 #     )
 #
 #     meta.create_all(engine)
+
+def existing_ik(log_info, public_ik):
+    result = session.query(Login, ECPublicKey).filter(Login.id==log_info.id).first()
+    if result == None:
+        return True
+    else:
+        ik = result.ECPublicKey.ik
+        print("Expected public ik: " + str(ik))
+        print("Provided public ik: " + str(public_ik))
+        if public_ik == ik:
+            return True
+        else:
+            return False

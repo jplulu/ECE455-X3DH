@@ -5,13 +5,14 @@ from aead import AEAD
 # Local imports
 from models import ECPublicKey, OT_PKey, Message
 from util import diffie_hellman, key_derivation, decrypt_message, encrypt_message
-from repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository
+from repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository, existing_ik
 from KeyPair import KeyPair
 
 
 # TODO: Add user identifier other than id and authentication -> modify functions so that identifier is used instead of id
 class User:
-    def __init__(self):
+    def __init__(self, login):
+        self.login = login
         self.ik = None
         self.spk = None
         self.opk = []
@@ -46,9 +47,12 @@ class User:
             opk_count -= 1
 
         # TODO: Authentication
-
+        ik_match = existing_ik(self.login, self.ik.public_key)
         # Insert public keys into table
-        self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
+        if ik_match == True:
+            self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
+        else:
+            print("Error: Mismatched identity key")
 
     def initiate_handshake(self, id: int, m: str = "handshake", use_opk: bool = True):
         """
