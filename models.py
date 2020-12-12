@@ -17,7 +17,7 @@ class ECPublicKey(Base):
     spk = Column(LargeBinary)
     spk_sig = Column(LargeBinary)
 
-    opks = relationship('OT_PKey', cascade='all,delete')
+    opks = relationship('OT_PKey', backref="keybundle", cascade='all,delete')
 
     def __init__(self, ik, spk, spk_sig):
         self.ik = ik
@@ -34,6 +34,7 @@ class OT_PKey(Base):
 
     id = Column(Integer, primary_key=True)
     opk = Column(LargeBinary)
+
     bundle_id = Column(Integer, ForeignKey('ecpublickeys.id'))
 
     def __init__(self, opk):
@@ -66,7 +67,8 @@ class Login(Base):
     username = Column(Text)
     password = Column(Text)
 
-    keybundle = Column(Integer, ForeignKey('ecpublickeys.id'))
+    keybundle_id = Column(Integer, ForeignKey('ecpublickeys.id'))
+    keybundle = relationship('ECPublicKey', backref="bundle")
 
     def __init__(self, username, password):
         self.username = username
@@ -78,7 +80,7 @@ class Login(Base):
 
 
 if __name__ == "__main__":
-    engine = create_engine('mysql://root:password@127.0.0.1:3306/keybundle')  # connect to server
+    engine = create_engine('mysql+pymysql:///keybundle')  # connect to server
     engine.execute("DROP DATABASE keybundle;")
     engine.execute("CREATE DATABASE keybundle;")
     engine.execute("USE keybundle;")

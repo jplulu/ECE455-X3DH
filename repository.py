@@ -8,7 +8,7 @@ from models import ECPublicKey, OT_PKey, Message, Login
 # engine = create_engine('sqlite:///keybundle.db', echo=False)
 # Session = sessionmaker(bind=engine)
 # session = Session()
-engine = create_engine('mysql://root:password@localhost:3306/keybundle')  # connect to server
+engine = create_engine('mysql+pymysql:///keybundle')  # connect to server
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -121,6 +121,21 @@ class MessageRepository:
         ).first()
         return result
 
+class UserRepository:
+    def __init__(self):
+        self.session = session
+        self.user = None
+
+    def get_user(self):
+        username = input("username: ")
+        password = input("password: ")
+        self.user = self.session.query(Login).filter_by(username=username, password=password).first()
+        return self.user
+
+    def update_user_key(self, kbundle):
+        if self.user != None:
+            self.user.keybundle = kbundle
+            self.session.commit()
 
 # def create_tables(meta, engine):
 #     """
@@ -154,16 +169,3 @@ class MessageRepository:
 #     )
 #
 #     meta.create_all(engine)
-
-def existing_ik(log_info, public_ik):
-    result = session.query(Login, ECPublicKey).filter(Login.id==log_info.id).first()
-    if result == None:
-        return True
-    else:
-        ik = result.ECPublicKey.ik
-        print("Expected public ik: " + str(ik))
-        print("Provided public ik: " + str(public_ik))
-        if public_ik == ik:
-            return True
-        else:
-            return False

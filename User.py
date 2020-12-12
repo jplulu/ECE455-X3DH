@@ -5,14 +5,13 @@ from aead import AEAD
 # Local imports
 from models import ECPublicKey, OT_PKey, Message
 from util import diffie_hellman, key_derivation, decrypt_message, encrypt_message
-from repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository, existing_ik
+from repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository, UserRepository
 from KeyPair import KeyPair
 
 
 # TODO: Add user identifier other than id and authentication -> modify functions so that identifier is used instead of id
 class User:
-    def __init__(self, login):
-        self.login = login
+    def __init__(self):
         self.ik = None
         self.spk = None
         self.opk = []
@@ -21,7 +20,12 @@ class User:
         self.public_key_repository = PublicKeyRepository()
         self.one_time_repository = OneTimeKeyRepository()
         self.message_repository = MessageRepository()
+        self.user_repository = UserRepository()
         self.set_keys()  # Remove later
+
+    def test(self):
+        pkey = self.public_key_repository.get_public_key_bundle_by_id(1)
+        print(pkey.opks)
 
     def set_keys(self):
         """
@@ -47,12 +51,14 @@ class User:
             opk_count -= 1
 
         # TODO: Authentication
-        ik_match = existing_ik(self.login, self.ik.public_key)
+        login = self.user_repository.get_user()
+        if login != None:
         # Insert public keys into table
-        if ik_match == True:
             self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
+            self.user_repository.update_user_key(kbundle=ec_public_key)
         else:
-            print("Error: Mismatched identity key")
+            print("Failed to login.")
+
 
     def initiate_handshake(self, id: int, m: str = "handshake", use_opk: bool = True):
         """
@@ -283,23 +289,23 @@ if __name__ == "__main__":
     receiver.publish_keys(opk_count=5)
     # receiver.save_keys('receiver.txt')
     # receiver.load_keys('receiver.txt')
-
-    # Sender gets the bundle and creates the shared key
-    sender = User()
-    sender.publish_keys(opk_count=5)
+    #
+    # # Sender gets the bundle and creates the shared key
+    # sender = User()
+    # sender.publish_keys(opk_count=5)
+    # # sender.save_keys('sender.txt')
+    # # sender.load_keys('sender.txt')
+    #
+    # # sender.initiate_handshake(id=1, use_opk=True)
+    # # receiver.complete_handshake(id=2)
+    # sender.send_message(1, "Hi there")
+    # sender.send_message(1, "How are you")
+    # receiver.get_message_by_sender(2)
+    # # Test saving and loading keys
+    # # print(receiver.sk)
+    # # print(receiver.opk[0])
+    # receiver.save_keys('receiver.txt')
     # sender.save_keys('sender.txt')
-    # sender.load_keys('sender.txt')
-
-    # sender.initiate_handshake(id=1, use_opk=True)
-    # receiver.complete_handshake(id=2)
-    sender.send_message(1, "Hi there")
-    sender.send_message(1, "How are you")
-    receiver.get_message_by_sender(2)
-    # Test saving and loading keys
-    # print(receiver.sk)
-    # print(receiver.opk[0])
-    receiver.save_keys('receiver.txt')
-    sender.save_keys('sender.txt')
-    # receiver.load_keys('receiver.txt')
-    # print(receiver.sk)
-    # print(receiver.opk[0])
+    # # receiver.load_keys('receiver.txt')
+    # # print(receiver.sk)
+    # # print(receiver.opk[0])
