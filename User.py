@@ -126,7 +126,7 @@ class User:
 
     def complete_handshake(self, receiver_id: int):
         # Get the initiate handshake message
-        message = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=self.login.id, receiver_id=receiver_id)
+        message = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=receiver_id, receiver_id=self.login.id)
         if message is None:
             print("No handshake message found")
             return
@@ -168,7 +168,7 @@ class User:
         if receiver_id not in self.sk:
             # Perform handshake if sk doesn't exist with receiver
             handshake_msg = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=receiver_id,
-                                                                                                 receiver_id=2)
+                                                                                                 receiver_id=self.login.id)
             if handshake_msg:
                 # Complete handshake if there is pending handshake from receiver
                 self.complete_handshake(receiver_id)
@@ -191,7 +191,7 @@ class User:
         if sender_id not in self.sk:
             # Check if there is a pending handshake from sender
             handshake_message = self.message_repository.get_handshake_message_by_sender_and_receiver(
-                sender_id=sender_id, receiver_id=1)
+                sender_id=sender_id, receiver_id=self.login.id)
             if handshake_message:
                 # Complete handshake if there is a pending handshake
                 self.complete_handshake(id=sender_id)
