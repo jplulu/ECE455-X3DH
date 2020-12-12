@@ -58,5 +58,8 @@ def decrypt_message(message_bytes: bytes, key: bytes) -> str:
     """
     key = b64encode(key)
     f = Fernet(key)
-    message_str = f.decrypt(message_bytes).decode("ascii")
+    try:
+        message_str = f.decrypt(message_bytes).decode("ascii")
+    except:
+        message_str = "Unable to decrypt message."
     return message_str

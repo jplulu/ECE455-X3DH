@@ -1,10 +1,9 @@
 from __future__ import annotations
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker
 from typing import List
-
 from models import ECPublicKey, OT_PKey, Message, Login
-
+from sqlalchemy.exc import IntegrityError
 # engine = create_engine('sqlite:///keybundle.db', echo=False)
 # Session = sessionmaker(bind=engine)
 # session = Session()
@@ -23,8 +22,13 @@ class PublicKeyRepository:
         :param ec_public_key: a public key bundle
         :return: None
         """
-        self.session.add(ec_public_key)
-        self.session.commit()
+        try:
+            self.session.add(ec_public_key)
+            self.session.commit()
+        except IntegrityError:
+            print("Key bundle already published.")
+            self.session.rollback()
+
 
     def get_all_public_key_bundles(self) -> List[ECPublicKey]:
         """
@@ -121,14 +125,28 @@ class MessageRepository:
         ).first()
         return result
 
+    def get_pending_handshake(self,id):
+        result = self.session.query(Message.sender_id).filter(
+            Message.receiver_id == id,
+            Message.sender_ik.isnot(None)
+        ).all()
+        return result
+
+    def get_messages(self, sender_id, receiver_id):
+        result = self.session.query(Message).filter(or_(and_(
+            Message.sender_id==sender_id,
+            Message.receiver_id==receiver_id
+        ),and_(Message.sender_id==receiver_id,
+            Message.receiver_id==sender_id)
+        )).order_by(Message.timestamp)
+        return [x for x in result]
+
 class UserRepository:
     def __init__(self):
         self.session = session
         self.user = None
 
-    def get_user(self):
-        username = input("username: ")
-        password = input("password: ")
+    def get_user(self, username, password):
         self.user = self.session.query(Login).filter_by(username=username, password=password).first()
         return self.user
 
@@ -136,6 +154,21 @@ class UserRepository:
         if self.user != None:
             self.user.keybundle = kbundle
             self.session.commit()
+
+    def get_username_by_id(self, id):
+        return self.session.query(Login.id, Login.username).filter(Login.id==id).first()
+
+    def add_user(self, username, password):
+        new_user = Login(username, password)
+        try:
+            self.session.add(new_user)
+            self.session.commit()
+            return new_user
+        except IntegrityError:
+            print("User already exists")
+            self.session.rollback()
+            return None
+
 
 # def create_tables(meta, engine):
 #     """

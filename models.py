@@ -12,14 +12,15 @@ Base = declarative_base()
 class ECPublicKey(Base):
     __tablename__ = "ecpublickeys"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, ForeignKey("logins.id"), primary_key=True)
     ik = Column(LargeBinary)
     spk = Column(LargeBinary)
     spk_sig = Column(LargeBinary)
 
     opks = relationship('OT_PKey', backref="keybundle", cascade='all,delete')
 
-    def __init__(self, ik, spk, spk_sig):
+    def __init__(self, id, ik, spk, spk_sig):
+        self.id = id
         self.ik = ik
         self.spk = spk
         self.spk_sig = spk_sig
@@ -48,8 +49,8 @@ class Message(Base):
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True)
-    receiver_id = Column(Integer, ForeignKey("ecpublickeys.id"))
-    sender_id = Column(Integer, ForeignKey("ecpublickeys.id"))
+    receiver_id = Column(Integer, ForeignKey("logins.id"))
+    sender_id = Column(Integer, ForeignKey("logins.id"))
     sender_ik = Column(LargeBinary)
     sender_ek = Column(LargeBinary)
     opk_used = Column(LargeBinary)
@@ -64,11 +65,11 @@ class Login(Base):
     __tablename__ = "logins"
 
     id = Column(Integer, primary_key=True)
-    username = Column(Text)
+    username = Column(String(50), unique=True)
     password = Column(Text)
 
-    keybundle_id = Column(Integer, ForeignKey('ecpublickeys.id'))
-    keybundle = relationship('ECPublicKey', backref="bundle")
+    # keybundle_id = Column(Integer, ForeignKey('ecpublickeys.id'))
+    # keybundle = relationship('ECPublicKey', backref="user")
 
     def __init__(self, username, password):
         self.username = username
