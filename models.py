@@ -12,14 +12,15 @@ Base = declarative_base()
 class ECPublicKey(Base):
     __tablename__ = "ecpublickeys"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, ForeignKey("logins.id"), primary_key=True)
     ik = Column(LargeBinary)
     spk = Column(LargeBinary)
     spk_sig = Column(LargeBinary)
 
-    opks = relationship('OT_PKey', cascade='all,delete')
+    opks = relationship('OT_PKey', backref="keybundle", cascade='all,delete')
 
-    def __init__(self, ik, spk, spk_sig):
+    def __init__(self, id, ik, spk, spk_sig):
+        self.id = id
         self.ik = ik
         self.spk = spk
         self.spk_sig = spk_sig
@@ -34,6 +35,7 @@ class OT_PKey(Base):
 
     id = Column(Integer, primary_key=True)
     opk = Column(LargeBinary)
+
     bundle_id = Column(Integer, ForeignKey('ecpublickeys.id'))
 
     def __init__(self, opk):
@@ -47,8 +49,8 @@ class Message(Base):
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True)
-    receiver_id = Column(Integer, ForeignKey("ecpublickeys.id"))
-    sender_id = Column(Integer, ForeignKey("ecpublickeys.id"))
+    receiver_id = Column(Integer, ForeignKey("logins.id"))
+    sender_id = Column(Integer, ForeignKey("logins.id"))
     sender_ik = Column(LargeBinary)
     sender_ek = Column(LargeBinary)
     opk_used = Column(LargeBinary)
@@ -59,9 +61,27 @@ class Message(Base):
         return "<Message(id=%s, receiver_id='%s', sender_id=%s, sender_ik=%s, sender_ek=%s, message=%s)>" % (
             self.id, self.receiver_id, self.sender_id, self.sender_ik, self.sender_ek, self.message)
 
+class Login(Base):
+    __tablename__ = "logins"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(50), unique=True)
+    password = Column(Text)
+
+    # keybundle_id = Column(Integer, ForeignKey('ecpublickeys.id'))
+    # keybundle = relationship('ECPublicKey', backref="user")
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+    def __repr__(self):
+        return "<Login(id=%s, username=%s, password=%s)>" % (self.id, self.username, self.password)
+
+
 
 if __name__ == "__main__":
-    engine = create_engine('mysql://root:password@127.0.0.1:3306/keybundle')  # connect to server
+    engine = create_engine('mysql+pymysql:///keybundle')  # connect to server
     engine.execute("DROP DATABASE keybundle;")
     engine.execute("CREATE DATABASE keybundle;")
     engine.execute("USE keybundle;")
