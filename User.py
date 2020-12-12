@@ -21,7 +21,9 @@ class User:
         self.one_time_repository = OneTimeKeyRepository()
         self.message_repository = MessageRepository()
         self.user_repository = UserRepository()
+        self.login = self.user_repository.get_user()
         self.set_keys()  # Remove later
+
 
     def test(self):
         pkey = self.public_key_repository.get_public_key_bundle_by_id(1)
@@ -51,8 +53,7 @@ class User:
             opk_count -= 1
 
         # TODO: Authentication
-        login = self.user_repository.get_user()
-        if login != None:
+        if self.login != None:
         # Insert public keys into table
             self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
             self.user_repository.update_user_key(kbundle=ec_public_key)
@@ -60,7 +61,7 @@ class User:
             print("Failed to login.")
 
 
-    def initiate_handshake(self, id: int, m: str = "handshake", use_opk: bool = True):
+    def initiate_handshake(self, m: str = "handshake", use_opk: bool = True):
         """
         Generates a Shared Key, SK using the public key bundle
         :param m:
@@ -69,7 +70,7 @@ class User:
         :return: relevant data for first message
         """
 
-        ec_public_key, opk = self._retrieve_key_bundle_for_handshake_by_id(id=id)
+        ec_public_key, opk = self._retrieve_key_bundle_for_handshake_by_id(id=self.login.id)
         if ec_public_key is None:
             print("Unable to retrieve key bundle")
             return
@@ -123,9 +124,9 @@ class User:
         self.sk[ec_public_key.id] = SK
         # return SK, ad, self.ik.public_key, EK.public_key, opk, spk_b
 
-    def complete_handshake(self, id: int):
+    def complete_handshake(self, receiver_id: int):
         # Get the initiate handshake message
-        message = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id, receiver_id=1)
+        message = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=self.login.id, receiver_id=receiver_id)
         if message is None:
             print("No handshake message found")
             return
@@ -253,13 +254,13 @@ class User:
                 user, key = sk.split()
                 self.sk[int(user)] = b64decode(key.encode("ASCII", errors="strict"), validate=True)
 
-    def _retrieve_key_bundle_for_handshake_by_id(self, id: int) -> (ECPublicKey, OT_PKey):
+    def _retrieve_key_bundle_for_handshake_by_id(self) -> (ECPublicKey, OT_PKey):
         """
         Gets the public key bundle for a user with the given id
         :param id: id for the public key bundle
         :return: the public key bundle for the given id
         """
-        ec_public_key = self.public_key_repository.get_public_key_bundle_by_id(id=id)
+        ec_public_key = self.public_key_repository.get_public_key_bundle_by_id(id=self.login.id)
         opk = self.one_time_repository.get_one_ot_pkey_by_bundle_id(id)
         # delete opk after fetch
         opk_pub = None
@@ -286,7 +287,7 @@ class User:
 if __name__ == "__main__":
     # Receiver publishes keys to the server
     receiver = User()
-    receiver.publish_keys(opk_count=5)
+    # receiver.publish_keys(opk_count=5)
     # receiver.save_keys('receiver.txt')
     # receiver.load_keys('receiver.txt')
     #
