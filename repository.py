@@ -4,10 +4,8 @@ from sqlalchemy.orm import sessionmaker
 from typing import List
 from models import ECPublicKey, OT_PKey, Message, Login
 from sqlalchemy.exc import IntegrityError
-# engine = create_engine('sqlite:///keybundle.db', echo=False)
-# Session = sessionmaker(bind=engine)
-# session = Session()
-engine = create_engine('mysql+pymysql:///keybundle')  # connect to server
+
+engine = create_engine('mysql://root:password@localhost/keybundle')  # connect to server
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -28,7 +26,6 @@ class PublicKeyRepository:
         except IntegrityError:
             print("Key bundle already published.")
             self.session.rollback()
-
 
     def get_all_public_key_bundles(self) -> List[ECPublicKey]:
         """
@@ -75,7 +72,7 @@ class OneTimeKeyRepository:
     def get_one_ot_pkey_by_bundle_id(self, bundle_id: int) -> OT_PKey:
         """
         Gets one OT_PKey corresponding to the given id
-        :param id: the bundle_id
+        :param bundle_id:
         :return: A single OT_PKey
         """
         result = self.session.query(OT_PKey) \
@@ -125,7 +122,7 @@ class MessageRepository:
         ).first()
         return result
 
-    def get_pending_handshake(self,id):
+    def get_pending_handshake(self, id):
         result = self.session.query(Message.sender_id).filter(
             Message.receiver_id == id,
             Message.sender_ik.isnot(None)
@@ -134,12 +131,13 @@ class MessageRepository:
 
     def get_messages(self, sender_id, receiver_id):
         result = self.session.query(Message).filter(or_(and_(
-            Message.sender_id==sender_id,
-            Message.receiver_id==receiver_id
-        ),and_(Message.sender_id==receiver_id,
-            Message.receiver_id==sender_id)
+            Message.sender_id == sender_id,
+            Message.receiver_id == receiver_id
+        ), and_(Message.sender_id == receiver_id,
+                Message.receiver_id == sender_id)
         )).order_by(Message.timestamp)
         return [x for x in result]
+
 
 class UserRepository:
     def __init__(self):
@@ -151,12 +149,12 @@ class UserRepository:
         return self.user
 
     def update_user_key(self, kbundle):
-        if self.user != None:
+        if self.user is not None:
             self.user.keybundle = kbundle
             self.session.commit()
 
     def get_username_by_id(self, id):
-        return self.session.query(Login.id, Login.username).filter(Login.id==id).first()
+        return self.session.query(Login.id, Login.username).filter(Login.id == id).first()
 
     def add_user(self, username, password):
         new_user = Login(username, password)
@@ -168,37 +166,3 @@ class UserRepository:
             print("User already exists")
             self.session.rollback()
             return None
-
-
-# def create_tables(meta, engine):
-#     """
-#     Creates the three tables
-#     :param meta: MetaData
-#     :param engine: SQLAlchemy engine
-#     :return: None
-#     """
-#     ecpublickeys = Table(
-#         'ecpublickeys', meta,
-#         Column('id', Integer, primary_key=True),
-#         Column('ik', LargeBinary),
-#         Column('spk', LargeBinary),
-#         Column('spk_sig', LargeBinary)
-#     )
-#
-#     ot_pkeys = Table(
-#         'ot_pkeys', meta,
-#         Column('id', Integer, primary_key=True),
-#         Column('opk', LargeBinary),
-#         Column('bundle_id', Integer, ForeignKey('ecpublickeys.id'))
-#     )
-#
-#     messages = Table(
-#         'messages', meta,
-#         Column('id', Integer, primary_key=True),
-#         Column('receiver_id', Integer, ForeignKey("ecpublickeys.id")),
-#         Column('sender_id', Integer, ForeignKey("ecpublickeys.id")),
-#         Column('content', JSON)
-#
-#     )
-#
-#     meta.create_all(engine)

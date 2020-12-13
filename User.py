@@ -9,7 +9,6 @@ from repository import PublicKeyRepository, OneTimeKeyRepository, MessageReposit
 from KeyPair import KeyPair
 
 
-# TODO: Add user identifier other than id and authentication -> modify functions so that identifier is used instead of id
 class User:
     def __init__(self, user=None):
         self.ik = None
@@ -22,7 +21,6 @@ class User:
         self.message_repository = MessageRepository()
         self.user_repository = UserRepository()
         self.login = user
-        # self.set_keys()  # Remove later
 
     def set_keys(self):
         """
@@ -47,16 +45,13 @@ class User:
             ec_public_key.opks.append(OT_PKey(opk=ot_pkey_set.public_key))
             opk_count -= 1
 
-        # TODO: Authentication
-        if self.login != None:
-        # Insert public keys into table
-            self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)            
-            # self.user_repository.update_user_key(kbundle=ec_public_key)
+        if self.login is not None:
+            # Insert public keys into table
+            self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
         else:
             print("Failed to login.")
 
-
-    def initiate_handshake(self, id: int , m: str = "handshake", use_opk: bool = True):
+    def initiate_handshake(self, id: int, m: str = "handshake", use_opk: bool = True):
         """
         Generates a Shared Key, SK using the public key bundle
         :param m:
@@ -65,15 +60,16 @@ class User:
         :return: relevant data for first message
         """
         if id == self.login.id:
-            print("Cannot handshake with self")
+            print("Handshake failed: Cannot handshake with self")
             return
-        if self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id, receiver_id=self.login.id):
+        if self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id,
+                                                                                receiver_id=self.login.id):
             print("Handshake already initiated by {}. Completing handshake...".format(id))
             self.complete_handshake(id=id)
             return
         ec_public_key, opk = self._retrieve_key_bundle_for_handshake_by_id(id=id)
         if ec_public_key is None:
-            print("Unable to retrieve key bundle")
+            print("Handshake failed: Unable to retrieve key bundle for user {}".format(id))
             return
 
         # Local vars
@@ -113,7 +109,8 @@ class User:
         # Encrypt initial message with the shared key, including the associated data
         cryptor = AEAD(b64encode(SK))
         msg = cryptor.encrypt(bytes(m, 'ASCII'), ad)
-        existing_handshake = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=self.login.id, receiver_id=id)
+        existing_handshake = self.message_repository.get_handshake_message_by_sender_and_receiver(
+            sender_id=self.login.id, receiver_id=id)
         if existing_handshake is None:
             message = Message(receiver_id=ec_public_key.id,
                               sender_id=self.login.id,
@@ -130,11 +127,12 @@ class User:
             existing_handshake.message = msg
             self.message_repository.session.commit()
         self.sk[ec_public_key.id] = SK
-        # return SK, ad, self.ik.public_key, EK.public_key, opk, spk_b
+        print('Handshake initiated with user {}'.format(id))
 
     def complete_handshake(self, id: int):
         # Get the initiate handshake message
-        message = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id, receiver_id=self.login.id)
+        message = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id,
+                                                                                       receiver_id=self.login.id)
         if message is None:
             print("No handshake message found")
             return None
@@ -160,10 +158,10 @@ class User:
         ad = message.sender_ik + self.ik.public_key
         msg = self._check_associated_data(message=message.message, associated_data=ad, shared_key=SK)
         if msg is None:
+            print("Failed to complete handshake: Unable to decrypt secret message")
             return None
         else:
             decoded_message = msg.decode('ASCII')
-            print(decoded_message)
             self.sk[id] = SK
         # Remove keys used from the message
         message.sender_ik = None
@@ -171,6 +169,7 @@ class User:
         message.opk_used = None
         message.message = encrypt_message(decoded_message, SK)
         self.public_key_repository.session.commit()
+        print('Handshake completed with user {}'.format(id))
 
     def send_message(self, receiver_id: int, m: str):
         if receiver_id not in self.sk:
@@ -179,9 +178,11 @@ class User:
                                                                                                  receiver_id=self.login.id)
             if handshake_msg:
                 # Complete handshake if there is pending handshake from receiver
+                print("Pending handshake from user {} found. Completing handshake...".format(receiver_id))
                 self.complete_handshake(receiver_id)
             else:
                 # Initiate handshake with intended message if there is no pending handshake from receiver
+                print("No key agreement found with user {}. Initiating handshake...".format(receiver_id))
                 self.initiate_handshake(id=receiver_id, m=m)
                 return
 
@@ -194,27 +195,42 @@ class User:
                           opk_used=None,
                           message=encrypted_msg)
         self.message_repository.insert_message(message=message)
+        print("Message sent")
 
     def get_message_by_sender(self, sender_id: int, receiver_id: int):
-        if sender_id not in self.sk:
+        if receiver_id == '':
+            receiver_id = self.login.id
+        else:
+            receiver_id = int(receiver_id)
+        if sender_id not in self.sk and receiver_id not in self.sk and receiver_id == self.login.id:
             # Check if there is a pending handshake from sender
             handshake_message = self.message_repository.get_handshake_message_by_sender_and_receiver(
                 sender_id=sender_id, receiver_id=self.login.id)
             if handshake_message:
                 # Complete handshake if there is a pending handshake
+                print("Pending handshake from user {} found. Completing handshake...".format(sender_id))
                 self.complete_handshake(id=sender_id)
-        try:
+
+        if sender_id in self.sk:
             key = self.sk[sender_id]
-        except KeyError:
-            key = KeyPair.generate_key_pair().public_key
-        if receiver_id == '':
-            messages = self.message_repository.get_messages(sender_id=sender_id, receiver_id=self.login.id)
+        elif receiver_id in self.sk:
+            key = self.sk[receiver_id]
         else:
-            messages = self.message_repository.get_messages(sender_id=sender_id, receiver_id=int(receiver_id))
-        for message in messages:
-            msg = message.message
-            decrypted_message = decrypt_message(msg, key)
-            print("{}: {} -> {}".format(message.sender_id, message.timestamp, decrypted_message))
+            key = KeyPair.generate_key_pair().public_key
+
+        messages = self.message_repository.get_messages(sender_id=sender_id, receiver_id=receiver_id)
+        if not messages:
+            print("No messages found")
+        else:
+            print("Sender     Time            Message")
+            print(40 * "-")
+            for message in messages:
+                msg = message.message
+                if message.sender_id == self.login.id and message.sender_ik:
+                    print("{}: {} -> PENDING HANDSHAKE MESSAGE".format(message.sender_id, message.timestamp))
+                else:
+                    decrypted_message = decrypt_message(msg, key)
+                    print("{}: {} -> {}".format(message.sender_id, message.timestamp, decrypted_message))
 
     def save_keys(self, filename: str) -> None:
         """
@@ -279,46 +295,47 @@ class User:
             self.one_time_repository.delete_ot_pkey_by_id(opk.id)
         return ec_public_key, opk_pub
 
-    def _check_associated_data(self, message: bytes, associated_data: bytes, shared_key: bytes) -> str:
+    def _check_associated_data(self, message: bytes, associated_data: bytes, shared_key: bytes):
         """
         Checks the associated data of the message initiating the handshake
         :param message: the Message
-        :return: True if matching, else False(
+        :return: Decrypted string if matching, else None
         """
         cryptor = AEAD(b64encode(shared_key))
         try:
             dec = cryptor.decrypt(message, associated_data)
+            return dec
         except ValueError as e:
-            print("Message was encrypted with outdated shared key.")
+            print("Unable to decrypt message.")
             return None
-        return dec
 
 
 if __name__ == "__main__":
+    pass
     # Receiver publishes keys to the server
-    receiver = User()
+    # receiver = User()
     # receiver.set_keys()
     # receiver.publish_keys(opk_count=5)
     # receiver.save_keys('receiver.txt')
-    receiver.load_keys('receiver.txt')
+    # receiver.load_keys('receiver.txt')
 
     # Sender gets the bundle and creates the shared key
-    sender = User()
+    # sender = User()
     # sender.set_keys()
     # sender.publish_keys(opk_count=5)
     # sender.save_keys('sender.txt')
-    sender.load_keys('sender.txt')
+    # sender.load_keys('sender.txt')
 
     # sender.initiate_handshake(id=1, use_opk=True)
     # receiver.complete_handshake(id=2)
-    sender.send_message(1, "Hi there")
-    sender.send_message(1, "How are you")
-    receiver.get_message_by_sender(2)
+    # sender.send_message(1, "Hi there")
+    # sender.send_message(1, "How are you")
+    # receiver.get_message_by_sender(2)
     # Test saving and loading keys
     # print(receiver.sk)
     # print(receiver.opk[0])
-    receiver.save_keys('receiver.txt')
-    sender.save_keys('sender.txt')
+    # receiver.save_keys('receiver.txt')
+    # sender.save_keys('sender.txt')
     # receiver.load_keys('receiver.txt')
     # print(receiver.sk)
     # print(receiver.opk[0])
