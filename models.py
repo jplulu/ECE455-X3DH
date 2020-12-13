@@ -61,15 +61,13 @@ class Message(Base):
         return "<Message(id=%s, receiver_id='%s', sender_id=%s, sender_ik=%s, sender_ek=%s, message=%s)>" % (
             self.id, self.receiver_id, self.sender_id, self.sender_ik, self.sender_ek, self.message)
 
+
 class Login(Base):
     __tablename__ = "logins"
 
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True)
     password = Column(Text)
-
-    # keybundle_id = Column(Integer, ForeignKey('ecpublickeys.id'))
-    # keybundle = relationship('ECPublicKey', backref="user")
 
     def __init__(self, username, password):
         self.username = username
@@ -79,9 +77,8 @@ class Login(Base):
         return "<Login(id=%s, username=%s, password=%s)>" % (self.id, self.username, self.password)
 
 
-
 if __name__ == "__main__":
-    engine = create_engine('mysql+pymysql:///keybundle')  # connect to server
+    engine = create_engine('mysql://root:password@localhost/keybundle')  # connect to server
     engine.execute("DROP DATABASE keybundle;")
     engine.execute("CREATE DATABASE keybundle;")
     engine.execute("USE keybundle;")
