@@ -1,13 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import models
-from repository import UserRepository
-from User import User
+from src.repository import UserRepository, PublicKeyRepository
+from src.User import User
 
 user_repo = UserRepository()
 
 
-def LoginRegister():
+def Demo():
     while True:
         choice = input("(1) Login \n(2) Register\n(3) Exit\n")
         if choice != "1" and choice != "2" and choice != "3":
@@ -58,7 +58,7 @@ def logged_in(user, key_filename=None):
     while True:
         choice = input(
             "(1) Initiate Handshake \n(2) Get Pending Handshake\n(3) Complete Handshake\n(4) Send Message\n(5) Read "
-            "Messages\n(6) Log out\n")
+            "Messages\n(6) Change SPK\n(7) Restock OPKs\n(8) Log Out\n")
         if choice == '1':
             while True:
                 receiver = input("Receiver id: ")
@@ -102,7 +102,25 @@ def logged_in(user, key_filename=None):
                 else:
                     print("Invalid id input")
             user.get_message_by_sender(int(sender_id), receiver_id)
+
         elif choice == '6':
+            while True:
+                user.set_spk()
+                user.save_keys(key_filename)
+                user.publish_keys(opk_count=0)
+                print("SPK has been changed and saved!")
+                break
+        elif choice == '7':
+            while True:
+                opk_count = input("Number of OPKs to publish: ")
+                try:
+                    user.publish_keys(opk_count=int(opk_count))
+                    user.save_keys(key_filename)
+                    "OPKs have been published and saved."
+                except ValueError:
+                    "{} is not a valid number!".format(opk_count)
+                break
+        elif choice == '8':
             user.save_keys(key_filename)
             break
         else:
