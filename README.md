@@ -1,5 +1,7 @@
 # ECE455-X3DH
 
+A proof-of-concept implementation of the X3DH key exchange protocol in Python.
+
 ## Installing Required Packages
 
 To install the packages, run:
