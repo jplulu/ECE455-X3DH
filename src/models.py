@@ -14,6 +14,10 @@ Base = declarative_base()
 
 
 class ECPublicKey(Base):
+    """
+    Class representing a key bundle. Contains a given user's id, public identity key, signed prekey,
+    and their prekey signature.
+    """
     __tablename__ = "ecpublickeys"
 
     id = Column(Integer, ForeignKey("logins.id"), primary_key=True)
@@ -23,7 +27,17 @@ class ECPublicKey(Base):
 
     opks = relationship('OT_PKey', backref="keybundle", cascade='all,delete')
 
-    def __init__(self, id, ik, spk, spk_sig):
+    def __init__(self, id: int,
+                 ik: bytes,
+                 spk: bytes,
+                 spk_sig: bytes):
+        """
+        :@param id: the id of the user
+        :@param ik: the public identity key of the user
+        :@param spk: the user's signed prekey
+        :@param spk: the prekey signature
+
+        """
         self.id = id
         self.ik = ik
         self.spk = spk
@@ -35,6 +49,10 @@ class ECPublicKey(Base):
 
 
 class OT_PKey(Base):
+    """
+    Class representing a one-time prekey. opk is the one-time prekey. The bundle_id references the id of the user
+    who created the one-time prekey. A given user can have many one-time prekeys.
+    """
     __tablename__ = "ot_pkeys"
 
     id = Column(Integer, primary_key=True)
@@ -50,6 +68,13 @@ class OT_PKey(Base):
 
 
 class Message(Base):
+    """
+    Class representing a message. A given message contains the sender's id, the receiver's id, the timestamp,
+    and the message. Messages that are sent to initiate a handshake also have the sender's public identity key, the
+    sender's public ephemeral key, and the one-time prekey that was used in the creaetion of the shared key.
+    Messages that are sent after the shared key has been derived have the previously listed values set to NULL.
+
+    """
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True)
@@ -67,6 +92,9 @@ class Message(Base):
 
 
 class Login(Base):
+    """
+    Class representing a user.
+    """
     __tablename__ = "logins"
 
     id = Column(Integer, primary_key=True)

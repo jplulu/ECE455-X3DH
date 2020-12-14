@@ -43,9 +43,9 @@ def demo():
                 if new_user is None:
                     break
                 user = User(new_user)
+                key_filename = input("Saved keys filename: ")
                 user.set_keys()
                 user.publish_keys(5)
-                key_filename = input("Saved keys filename: ")
                 user.save_keys(key_filename)
                 logged_in(user, key_filename)
                 break

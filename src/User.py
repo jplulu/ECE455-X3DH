@@ -10,6 +10,9 @@ from src.KeyPair import KeyPair
 
 
 class User:
+    """
+    Class representing a user
+    """
     def __init__(self, user=None):
         self.ik = None
         self.spk = None
@@ -188,6 +191,7 @@ class User:
         message.sender_ek = None
         message.opk_used = None
         message.message = encrypt_message(decoded_message, SK)
+        self.message_repository.session.commit()
         self.public_key_repository.session.commit()
         print('Handshake completed with user {}'.format(id))
 
@@ -221,6 +225,7 @@ class User:
                           opk_used=None,
                           message=encrypted_msg)
         self.message_repository.insert_message(message=message)
+        self.message_repository.session.commit()
         print("Message sent")
 
     def get_message_by_sender(self, sender_id: int, receiver_id: int):
@@ -259,6 +264,7 @@ class User:
             print(40 * "-")
             for message in messages:
                 msg = message.message
+                print(message.sender_ik)
                 if message.sender_id == self.login.id and message.sender_ik:
                     print("{}: {} -> PENDING HANDSHAKE MESSAGE".format(message.sender_id, message.timestamp))
                 else:
