@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>X3DH.User API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>X3DH.User</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from xeddsa.implementations import XEdDSA25519
+from base64 import b64encode, b64decode
+from aead import AEAD
+
+# Local imports
+from models import ECPublicKey, OT_PKey, Message
+from util import diffie_hellman, key_derivation, decrypt_message, encrypt_message
+from repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository, UserRepository
+from KeyPair import KeyPair
+
+
+class User:
+    def __init__(self, user=None):
+        self.ik = None
+        self.spk = None
+        self.opk = []
+        self.max_opk = 0
+        self.sk = {}
+        self.public_key_repository = PublicKeyRepository()
+        self.one_time_repository = OneTimeKeyRepository()
+        self.message_repository = MessageRepository()
+        self.user_repository = UserRepository()
+        self.login = user
+
+    def set_keys(self):
+        &#34;&#34;&#34;
+        Sets the keys for a new user
+        :return: None
+        &#34;&#34;&#34;
+        self.ik = KeyPair.generate_key_pair()
+        self.spk = KeyPair.generate_key_pair()
+
+    def set_spk(self):
+        &#34;&#34;&#34;
+        Sets new SPKs for the user
+        :return: None
+        &#34;&#34;&#34;
+        self.spk = KeyPair.generate_key_pair()
+
+    def publish_keys(self, opk_count):
+        &#34;&#34;&#34;
+        Publishes a bundle of public keys to the server. Can be used to publish a new
+        :param opk_count: Number of One time pre-keys to create when the public key bundle is published
+        :return: None
+        &#34;&#34;&#34;
+        spk_sig = XEdDSA25519(mont_priv=self.ik.private_key).sign(self.spk.public_key)
+        ec_public_key = ECPublicKey(self.login.id, self.ik.public_key, self.spk.public_key, spk_sig)
+
+        # CASE New SPK: Verify that the IK of the new bundle matches that of the one on the server
+        existing_pkey_bundle = self.public_key_repository.get_public_key_bundle_by_id(self.login.id)
+        if existing_pkey_bundle is not None and self.ik.public_key != existing_pkey_bundle.ik:
+            print(&#34;Identity key cannot be changed!&#34;)
+            return None
+
+        # Add the number of OPKs specified by opk_count. Add those OPKs to the user&#39;s list of opks.
+        self.max_opk = opk_count
+        while opk_count &gt; 0:
+            ot_pkey_set = KeyPair.generate_key_pair()
+            self.opk.append(ot_pkey_set)  # Append KeyPair to list of opks
+            ec_public_key.opks.append(OT_PKey(opk=ot_pkey_set.public_key))
+            opk_count -= 1
+
+        if self.login is not None:
+            # Insert public keys into table
+            self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
+        else:
+            print(&#34;Failed to login.&#34;)
+
+    def initiate_handshake(self, id: int, m: str = &#34;handshake&#34;, use_opk: bool = True):
+        &#34;&#34;&#34;
+        Generates a Shared Key, SK using the public key bundle
+        :param m:
+        :param use_opk:
+        :param id: Use the pre-key
+        :return: relevant data for first message
+        &#34;&#34;&#34;
+        if id == self.login.id:
+            print(&#34;Handshake failed: Cannot handshake with self&#34;)
+            return
+        if self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id,
+                                                                                receiver_id=self.login.id):
+            print(&#34;Handshake already initiated by {}. Completing handshake...&#34;.format(id))
+            self.complete_handshake(id=id)
+            return
+        ec_public_key, opk = self._retrieve_key_bundle_for_handshake_by_id(id=id)
+        if ec_public_key is None:
+            print(&#34;Handshake failed: Unable to retrieve key bundle for user {}&#34;.format(id))
+            return
+
+        # Local vars
+        ik_b = ec_public_key.ik
+        spk_b = ec_public_key.spk
+        spk_sig_b = ec_public_key.spk_sig
+
+        # Verity the signature
+        if not XEdDSA25519(mont_pub=ik_b).verify(
+                spk_b,
+                spk_sig_b
+        ):
+            print(&#34;The signature of this public bundle&#39;s spk could not be verified&#34;)
+            return
+
+        EK = KeyPair.generate_key_pair()
+        DH1 = diffie_hellman(self.ik.private_key, spk_b)
+        DH2 = diffie_hellman(EK.private_key, ik_b)
+        DH3 = diffie_hellman(EK.private_key, spk_b)
+        DH4 = b&#34;&#34;
+
+        opk_payload = None  # opk to send in message
+        if use_opk:
+            if opk:
+                DH4 = diffie_hellman(EK.private_key, opk)
+                opk_payload = opk
+            else:
+                print(&#34;Use opk is active but no opk is found&#34;)
+                return
+
+        # Create the shared key
+        SK = key_derivation(DH1 + DH2 + DH3 + DH4)
+
+        # Calculate the associated data
+        ad = self.ik.public_key + ik_b
+
+        # Encrypt initial message with the shared key, including the associated data
+        cryptor = AEAD(b64encode(SK))
+        msg = cryptor.encrypt(bytes(m, &#39;ASCII&#39;), ad)
+        existing_handshake = self.message_repository.get_handshake_message_by_sender_and_receiver(
+            sender_id=self.login.id, receiver_id=id)
+        if existing_handshake is None:
+            message = Message(receiver_id=ec_public_key.id,
+                              sender_id=self.login.id,
+                              sender_ik=self.ik.public_key,
+                              sender_ek=EK.public_key,
+                              opk_used=opk_payload,
+                              message=msg)
+
+            # Post message to server with the correct key bundle
+            self.message_repository.insert_message(message=message)
+        else:
+            existing_handshake.sender_ek = EK.public_key
+            existing_handshake.opk_used = opk_payload
+            existing_handshake.message = msg
+            self.message_repository.session.commit()
+        self.sk[ec_public_key.id] = SK
+        print(&#39;Handshake initiated with user {}&#39;.format(id))
+
+    def complete_handshake(self, id: int):
+        &#34;&#34;&#34;
+        Completes the handshake sent by the user with the given id
+        :param id: The id of the initiating user
+        :return: None
+        &#34;&#34;&#34;
+        # Get the initiate handshake message
+        message = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id,
+                                                                                       receiver_id=self.login.id)
+        if message is None:
+            print(&#34;No handshake message found&#34;)
+            return None
+
+        # Perform Diffie-Hellman to get Shared Key
+        DH1 = diffie_hellman(self.spk.private_key, message.sender_ik)
+        DH2 = diffie_hellman(self.ik.private_key, message.sender_ek)
+        DH3 = diffie_hellman(self.spk.private_key, message.sender_ek)
+        DH4 = b&#34;&#34;
+        if message.opk_used:
+            opk_priv = None
+            for i, opk in enumerate(self.opk):
+                if opk.public_key == message.opk_used:
+                    opk_priv = opk.private_key
+                    del self.opk[i]
+                    break
+            DH4 = diffie_hellman(opk_priv, message.sender_ek)
+
+        # Calculate the shared key
+        SK = key_derivation(DH1 + DH2 + DH3 + DH4)
+
+        # Calculate the associated data
+        ad = message.sender_ik + self.ik.public_key
+        msg = self._check_associated_data(message=message.message, associated_data=ad, shared_key=SK)
+        if msg is None:
+            print(&#34;Failed to complete handshake: Unable to decrypt secret message&#34;)
+            return None
+        else:
+            decoded_message = msg.decode(&#39;ASCII&#39;)
+            self.sk[id] = SK
+        # Remove keys used from the message
+        message.sender_ik = None
+        message.sender_ek = None
+        message.opk_used = None
+        message.message = encrypt_message(decoded_message, SK)
+        self.public_key_repository.session.commit()
+        print(&#39;Handshake completed with user {}&#39;.format(id))
+
+    def send_message(self, receiver_id: int, m: str):
+        &#34;&#34;&#34;
+        Sends a message to the specified user, encrypted with the derived shared key
+        :param receiver_id: the id of the receiver
+        :param m: the message
+        :return: None
+        &#34;&#34;&#34;
+        if receiver_id not in self.sk:
+            # Perform handshake if sk doesn&#39;t exist with receiver
+            handshake_msg = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=receiver_id,
+                                                                                                 receiver_id=self.login.id)
+            if handshake_msg:
+                # Complete handshake if there is pending handshake from receiver
+                print(&#34;Pending handshake from user {} found. Completing handshake...&#34;.format(receiver_id))
+                self.complete_handshake(receiver_id)
+            else:
+                # Initiate handshake with intended message if there is no pending handshake from receiver
+                print(&#34;No key agreement found with user {}. Initiating handshake...&#34;.format(receiver_id))
+                self.initiate_handshake(id=receiver_id, m=m)
+                return
+
+        sk = self.sk[receiver_id]
+        encrypted_msg = encrypt_message(m, sk)
+        message = Message(receiver_id=receiver_id,
+                          sender_id=self.login.id,
+                          sender_ik=None,
+                          sender_ek=None,
+                          opk_used=None,
+                          message=encrypted_msg)
+        self.message_repository.insert_message(message=message)
+        print(&#34;Message sent&#34;)
+
+    def get_message_by_sender(self, sender_id: int, receiver_id: int):
+        &#34;&#34;&#34;
+        Gets all of the messages sent between the users with ids sender_id and receiver_id.
+        sender_id is settable for demonstration purpose.
+        :param sender_id: the id of the sender (typically the id of the user who is logged in)
+        :param receiver_id: the id of the receiver
+        :return: None
+        &#34;&#34;&#34;
+        if receiver_id == &#39;&#39;:
+            receiver_id = self.login.id
+        else:
+            receiver_id = int(receiver_id)
+        if sender_id not in self.sk and receiver_id not in self.sk and receiver_id == self.login.id:
+            # Check if there is a pending handshake from sender
+            handshake_message = self.message_repository.get_handshake_message_by_sender_and_receiver(
+                sender_id=sender_id, receiver_id=self.login.id)
+            if handshake_message:
+                # Complete handshake if there is a pending handshake
+                print(&#34;Pending handshake from user {} found. Completing handshake...&#34;.format(sender_id))
+                self.complete_handshake(id=sender_id)
+
+        if sender_id in self.sk:
+            key = self.sk[sender_id]
+        elif receiver_id in self.sk:
+            key = self.sk[receiver_id]
+        else:
+            key = KeyPair.generate_key_pair().public_key
+
+        messages = self.message_repository.get_messages(sender_id=sender_id, receiver_id=receiver_id)
+        if not messages:
+            print(&#34;No messages found&#34;)
+        else:
+            print(&#34;Sender     Time            Message&#34;)
+            print(40 * &#34;-&#34;)
+            for message in messages:
+                msg = message.message
+                if message.sender_id == self.login.id and message.sender_ik:
+                    print(&#34;{}: {} -&gt; PENDING HANDSHAKE MESSAGE&#34;.format(message.sender_id, message.timestamp))
+                else:
+                    decrypted_message = decrypt_message(msg, key)
+                    print(&#34;{}: {} -&gt; {}&#34;.format(message.sender_id, message.timestamp, decrypted_message))
+
+    def save_keys(self, filename: str) -&gt; None:
+        &#34;&#34;&#34;
+        Saves the public and private identity and pre-keys to a file
+        :param filename: file to save the keys
+        :return:None
+        &#34;&#34;&#34;
+
+        text = &#34;&#34;
+        text += &#34;identity-key,{},{}\n&#34;.format(b64encode(self.ik.private_key).decode(&#34;ASCII&#34;),
+                                              b64encode(self.ik.public_key).decode(&#34;ASCII&#34;))
+        text += &#34;pre-key,{},{}\n&#34;.format(b64encode(self.spk.private_key).decode(&#34;ASCII&#34;),
+                                         b64encode(self.spk.public_key).decode(&#34;ASCII&#34;))
+        text += &#34;one-time-key&#34;
+        for opk in self.opk:
+            text += &#34;,{} {}&#34;.format(b64encode(opk.private_key).decode(&#34;ASCII&#34;),
+                                    b64encode(opk.public_key).decode(&#34;ASCII&#34;))
+        text += &#34;\nsecret-key&#34;
+        for user, key in self.sk.items():
+            text += &#34;,{} {}&#34;.format(user,
+                                    b64encode(key).decode(&#34;ASCII&#34;))
+        with open(filename, &#39;w&#39;) as f:
+            f.write(text)
+
+    def load_keys(self, filename: str) -&gt; None:
+        &#34;&#34;&#34;
+        Loads public and private keys that were stored in a file
+        :param filename: file to load keys
+        :return: None
+        &#34;&#34;&#34;
+
+        with open(filename, &#39;r&#39;) as f:
+            text = f.read().split(&#34;\n&#34;)
+            ik = text[0].split(&#34;,&#34;)[1:]
+            spk = text[1].split(&#34;,&#34;)[1:]
+            opks = text[2].split(&#34;,&#34;)[1:]
+            sks = text[3].split(&#34;,&#34;)[1:]
+            self.ik = KeyPair(private_key=b64decode(ik[0].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True),
+                              public_key=b64decode(ik[1].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True))
+            self.spk = KeyPair(private_key=b64decode(spk[0].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True),
+                               public_key=b64decode(spk[1].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True))
+            for opk in opks:
+                priv, pub = opk.split()
+                self.opk.append(KeyPair(b64decode(priv.encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True),
+                                        b64decode(pub.encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True)))
+            for sk in sks:
+                user, key = sk.split()
+                self.sk[int(user)] = b64decode(key.encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True)
+
+    def _retrieve_key_bundle_for_handshake_by_id(self, id: int) -&gt; (ECPublicKey, OT_PKey):
+        &#34;&#34;&#34;
+        Gets the public key bundle for a user with the given id
+        :param id: id for the public key bundle
+        :return: the public key bundle for the given id
+        &#34;&#34;&#34;
+        ec_public_key = self.public_key_repository.get_public_key_bundle_by_id(id=id)
+        opk = self.one_time_repository.get_one_ot_pkey_by_bundle_id(id)
+
+        # delete opk after fetch
+        opk_pub = None
+        if opk:
+            opk_pub = opk.opk
+            self.one_time_repository.delete_ot_pkey_by_id(opk.id)
+        return ec_public_key, opk_pub
+
+    def _check_associated_data(self, message: bytes, associated_data: bytes, shared_key: bytes):
+        &#34;&#34;&#34;
+        Checks the associated data of the message initiating the handshake
+        :param message: the Message
+        :return: Decrypted string if matching, else None
+        &#34;&#34;&#34;
+        cryptor = AEAD(b64encode(shared_key))
+        try:
+            dec = cryptor.decrypt(message, associated_data)
+            return dec
+        except ValueError as e:
+            print(&#34;Unable to decrypt message.&#34;)
+            return None</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="X3DH.User.User"><code class="flex name class">
+<span>class <span class="ident">User</span></span>
+<span>(</span><span>user=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class User:
+    def __init__(self, user=None):
+        self.ik = None
+        self.spk = None
+        self.opk = []
+        self.max_opk = 0
+        self.sk = {}
+        self.public_key_repository = PublicKeyRepository()
+        self.one_time_repository = OneTimeKeyRepository()
+        self.message_repository = MessageRepository()
+        self.user_repository = UserRepository()
+        self.login = user
+
+    def set_keys(self):
+        &#34;&#34;&#34;
+        Sets the keys for a new user
+        :return: None
+        &#34;&#34;&#34;
+        self.ik = KeyPair.generate_key_pair()
+        self.spk = KeyPair.generate_key_pair()
+
+    def set_spk(self):
+        &#34;&#34;&#34;
+        Sets new SPKs for the user
+        :return: None
+        &#34;&#34;&#34;
+        self.spk = KeyPair.generate_key_pair()
+
+    def publish_keys(self, opk_count):
+        &#34;&#34;&#34;
+        Publishes a bundle of public keys to the server. Can be used to publish a new
+        :param opk_count: Number of One time pre-keys to create when the public key bundle is published
+        :return: None
+        &#34;&#34;&#34;
+        spk_sig = XEdDSA25519(mont_priv=self.ik.private_key).sign(self.spk.public_key)
+        ec_public_key = ECPublicKey(self.login.id, self.ik.public_key, self.spk.public_key, spk_sig)
+
+        # CASE New SPK: Verify that the IK of the new bundle matches that of the one on the server
+        existing_pkey_bundle = self.public_key_repository.get_public_key_bundle_by_id(self.login.id)
+        if existing_pkey_bundle is not None and self.ik.public_key != existing_pkey_bundle.ik:
+            print(&#34;Identity key cannot be changed!&#34;)
+            return None
+
+        # Add the number of OPKs specified by opk_count. Add those OPKs to the user&#39;s list of opks.
+        self.max_opk = opk_count
+        while opk_count &gt; 0:
+            ot_pkey_set = KeyPair.generate_key_pair()
+            self.opk.append(ot_pkey_set)  # Append KeyPair to list of opks
+            ec_public_key.opks.append(OT_PKey(opk=ot_pkey_set.public_key))
+            opk_count -= 1
+
+        if self.login is not None:
+            # Insert public keys into table
+            self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
+        else:
+            print(&#34;Failed to login.&#34;)
+
+    def initiate_handshake(self, id: int, m: str = &#34;handshake&#34;, use_opk: bool = True):
+        &#34;&#34;&#34;
+        Generates a Shared Key, SK using the public key bundle
+        :param m:
+        :param use_opk:
+        :param id: Use the pre-key
+        :return: relevant data for first message
+        &#34;&#34;&#34;
+        if id == self.login.id:
+            print(&#34;Handshake failed: Cannot handshake with self&#34;)
+            return
+        if self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id,
+                                                                                receiver_id=self.login.id):
+            print(&#34;Handshake already initiated by {}. Completing handshake...&#34;.format(id))
+            self.complete_handshake(id=id)
+            return
+        ec_public_key, opk = self._retrieve_key_bundle_for_handshake_by_id(id=id)
+        if ec_public_key is None:
+            print(&#34;Handshake failed: Unable to retrieve key bundle for user {}&#34;.format(id))
+            return
+
+        # Local vars
+        ik_b = ec_public_key.ik
+        spk_b = ec_public_key.spk
+        spk_sig_b = ec_public_key.spk_sig
+
+        # Verity the signature
+        if not XEdDSA25519(mont_pub=ik_b).verify(
+                spk_b,
+                spk_sig_b
+        ):
+            print(&#34;The signature of this public bundle&#39;s spk could not be verified&#34;)
+            return
+
+        EK = KeyPair.generate_key_pair()
+        DH1 = diffie_hellman(self.ik.private_key, spk_b)
+        DH2 = diffie_hellman(EK.private_key, ik_b)
+        DH3 = diffie_hellman(EK.private_key, spk_b)
+        DH4 = b&#34;&#34;
+
+        opk_payload = None  # opk to send in message
+        if use_opk:
+            if opk:
+                DH4 = diffie_hellman(EK.private_key, opk)
+                opk_payload = opk
+            else:
+                print(&#34;Use opk is active but no opk is found&#34;)
+                return
+
+        # Create the shared key
+        SK = key_derivation(DH1 + DH2 + DH3 + DH4)
+
+        # Calculate the associated data
+        ad = self.ik.public_key + ik_b
+
+        # Encrypt initial message with the shared key, including the associated data
+        cryptor = AEAD(b64encode(SK))
+        msg = cryptor.encrypt(bytes(m, &#39;ASCII&#39;), ad)
+        existing_handshake = self.message_repository.get_handshake_message_by_sender_and_receiver(
+            sender_id=self.login.id, receiver_id=id)
+        if existing_handshake is None:
+            message = Message(receiver_id=ec_public_key.id,
+                              sender_id=self.login.id,
+                              sender_ik=self.ik.public_key,
+                              sender_ek=EK.public_key,
+                              opk_used=opk_payload,
+                              message=msg)
+
+            # Post message to server with the correct key bundle
+            self.message_repository.insert_message(message=message)
+        else:
+            existing_handshake.sender_ek = EK.public_key
+            existing_handshake.opk_used = opk_payload
+            existing_handshake.message = msg
+            self.message_repository.session.commit()
+        self.sk[ec_public_key.id] = SK
+        print(&#39;Handshake initiated with user {}&#39;.format(id))
+
+    def complete_handshake(self, id: int):
+        &#34;&#34;&#34;
+        Completes the handshake sent by the user with the given id
+        :param id: The id of the initiating user
+        :return: None
+        &#34;&#34;&#34;
+        # Get the initiate handshake message
+        message = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id,
+                                                                                       receiver_id=self.login.id)
+        if message is None:
+            print(&#34;No handshake message found&#34;)
+            return None
+
+        # Perform Diffie-Hellman to get Shared Key
+        DH1 = diffie_hellman(self.spk.private_key, message.sender_ik)
+        DH2 = diffie_hellman(self.ik.private_key, message.sender_ek)
+        DH3 = diffie_hellman(self.spk.private_key, message.sender_ek)
+        DH4 = b&#34;&#34;
+        if message.opk_used:
+            opk_priv = None
+            for i, opk in enumerate(self.opk):
+                if opk.public_key == message.opk_used:
+                    opk_priv = opk.private_key
+                    del self.opk[i]
+                    break
+            DH4 = diffie_hellman(opk_priv, message.sender_ek)
+
+        # Calculate the shared key
+        SK = key_derivation(DH1 + DH2 + DH3 + DH4)
+
+        # Calculate the associated data
+        ad = message.sender_ik + self.ik.public_key
+        msg = self._check_associated_data(message=message.message, associated_data=ad, shared_key=SK)
+        if msg is None:
+            print(&#34;Failed to complete handshake: Unable to decrypt secret message&#34;)
+            return None
+        else:
+            decoded_message = msg.decode(&#39;ASCII&#39;)
+            self.sk[id] = SK
+        # Remove keys used from the message
+        message.sender_ik = None
+        message.sender_ek = None
+        message.opk_used = None
+        message.message = encrypt_message(decoded_message, SK)
+        self.public_key_repository.session.commit()
+        print(&#39;Handshake completed with user {}&#39;.format(id))
+
+    def send_message(self, receiver_id: int, m: str):
+        &#34;&#34;&#34;
+        Sends a message to the specified user, encrypted with the derived shared key
+        :param receiver_id: the id of the receiver
+        :param m: the message
+        :return: None
+        &#34;&#34;&#34;
+        if receiver_id not in self.sk:
+            # Perform handshake if sk doesn&#39;t exist with receiver
+            handshake_msg = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=receiver_id,
+                                                                                                 receiver_id=self.login.id)
+            if handshake_msg:
+                # Complete handshake if there is pending handshake from receiver
+                print(&#34;Pending handshake from user {} found. Completing handshake...&#34;.format(receiver_id))
+                self.complete_handshake(receiver_id)
+            else:
+                # Initiate handshake with intended message if there is no pending handshake from receiver
+                print(&#34;No key agreement found with user {}. Initiating handshake...&#34;.format(receiver_id))
+                self.initiate_handshake(id=receiver_id, m=m)
+                return
+
+        sk = self.sk[receiver_id]
+        encrypted_msg = encrypt_message(m, sk)
+        message = Message(receiver_id=receiver_id,
+                          sender_id=self.login.id,
+                          sender_ik=None,
+                          sender_ek=None,
+                          opk_used=None,
+                          message=encrypted_msg)
+        self.message_repository.insert_message(message=message)
+        print(&#34;Message sent&#34;)
+
+    def get_message_by_sender(self, sender_id: int, receiver_id: int):
+        &#34;&#34;&#34;
+        Gets all of the messages sent between the users with ids sender_id and receiver_id.
+        sender_id is settable for demonstration purpose.
+        :param sender_id: the id of the sender (typically the id of the user who is logged in)
+        :param receiver_id: the id of the receiver
+        :return: None
+        &#34;&#34;&#34;
+        if receiver_id == &#39;&#39;:
+            receiver_id = self.login.id
+        else:
+            receiver_id = int(receiver_id)
+        if sender_id not in self.sk and receiver_id not in self.sk and receiver_id == self.login.id:
+            # Check if there is a pending handshake from sender
+            handshake_message = self.message_repository.get_handshake_message_by_sender_and_receiver(
+                sender_id=sender_id, receiver_id=self.login.id)
+            if handshake_message:
+                # Complete handshake if there is a pending handshake
+                print(&#34;Pending handshake from user {} found. Completing handshake...&#34;.format(sender_id))
+                self.complete_handshake(id=sender_id)
+
+        if sender_id in self.sk:
+            key = self.sk[sender_id]
+        elif receiver_id in self.sk:
+            key = self.sk[receiver_id]
+        else:
+            key = KeyPair.generate_key_pair().public_key
+
+        messages = self.message_repository.get_messages(sender_id=sender_id, receiver_id=receiver_id)
+        if not messages:
+            print(&#34;No messages found&#34;)
+        else:
+            print(&#34;Sender     Time            Message&#34;)
+            print(40 * &#34;-&#34;)
+            for message in messages:
+                msg = message.message
+                if message.sender_id == self.login.id and message.sender_ik:
+                    print(&#34;{}: {} -&gt; PENDING HANDSHAKE MESSAGE&#34;.format(message.sender_id, message.timestamp))
+                else:
+                    decrypted_message = decrypt_message(msg, key)
+                    print(&#34;{}: {} -&gt; {}&#34;.format(message.sender_id, message.timestamp, decrypted_message))
+
+    def save_keys(self, filename: str) -&gt; None:
+        &#34;&#34;&#34;
+        Saves the public and private identity and pre-keys to a file
+        :param filename: file to save the keys
+        :return:None
+        &#34;&#34;&#34;
+
+        text = &#34;&#34;
+        text += &#34;identity-key,{},{}\n&#34;.format(b64encode(self.ik.private_key).decode(&#34;ASCII&#34;),
+                                              b64encode(self.ik.public_key).decode(&#34;ASCII&#34;))
+        text += &#34;pre-key,{},{}\n&#34;.format(b64encode(self.spk.private_key).decode(&#34;ASCII&#34;),
+                                         b64encode(self.spk.public_key).decode(&#34;ASCII&#34;))
+        text += &#34;one-time-key&#34;
+        for opk in self.opk:
+            text += &#34;,{} {}&#34;.format(b64encode(opk.private_key).decode(&#34;ASCII&#34;),
+                                    b64encode(opk.public_key).decode(&#34;ASCII&#34;))
+        text += &#34;\nsecret-key&#34;
+        for user, key in self.sk.items():
+            text += &#34;,{} {}&#34;.format(user,
+                                    b64encode(key).decode(&#34;ASCII&#34;))
+        with open(filename, &#39;w&#39;) as f:
+            f.write(text)
+
+    def load_keys(self, filename: str) -&gt; None:
+        &#34;&#34;&#34;
+        Loads public and private keys that were stored in a file
+        :param filename: file to load keys
+        :return: None
+        &#34;&#34;&#34;
+
+        with open(filename, &#39;r&#39;) as f:
+            text = f.read().split(&#34;\n&#34;)
+            ik = text[0].split(&#34;,&#34;)[1:]
+            spk = text[1].split(&#34;,&#34;)[1:]
+            opks = text[2].split(&#34;,&#34;)[1:]
+            sks = text[3].split(&#34;,&#34;)[1:]
+            self.ik = KeyPair(private_key=b64decode(ik[0].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True),
+                              public_key=b64decode(ik[1].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True))
+            self.spk = KeyPair(private_key=b64decode(spk[0].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True),
+                               public_key=b64decode(spk[1].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True))
+            for opk in opks:
+                priv, pub = opk.split()
+                self.opk.append(KeyPair(b64decode(priv.encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True),
+                                        b64decode(pub.encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True)))
+            for sk in sks:
+                user, key = sk.split()
+                self.sk[int(user)] = b64decode(key.encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True)
+
+    def _retrieve_key_bundle_for_handshake_by_id(self, id: int) -&gt; (ECPublicKey, OT_PKey):
+        &#34;&#34;&#34;
+        Gets the public key bundle for a user with the given id
+        :param id: id for the public key bundle
+        :return: the public key bundle for the given id
+        &#34;&#34;&#34;
+        ec_public_key = self.public_key_repository.get_public_key_bundle_by_id(id=id)
+        opk = self.one_time_repository.get_one_ot_pkey_by_bundle_id(id)
+
+        # delete opk after fetch
+        opk_pub = None
+        if opk:
+            opk_pub = opk.opk
+            self.one_time_repository.delete_ot_pkey_by_id(opk.id)
+        return ec_public_key, opk_pub
+
+    def _check_associated_data(self, message: bytes, associated_data: bytes, shared_key: bytes):
+        &#34;&#34;&#34;
+        Checks the associated data of the message initiating the handshake
+        :param message: the Message
+        :return: Decrypted string if matching, else None
+        &#34;&#34;&#34;
+        cryptor = AEAD(b64encode(shared_key))
+        try:
+            dec = cryptor.decrypt(message, associated_data)
+            return dec
+        except ValueError as e:
+            print(&#34;Unable to decrypt message.&#34;)
+            return None</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="X3DH.User.User.complete_handshake"><code class="name flex">
+<span>def <span class="ident">complete_handshake</span></span>(<span>self, id: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Completes the handshake sent by the user with the given id
+:param id: The id of the initiating user
+:return: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def complete_handshake(self, id: int):
+    &#34;&#34;&#34;
+    Completes the handshake sent by the user with the given id
+    :param id: The id of the initiating user
+    :return: None
+    &#34;&#34;&#34;
+    # Get the initiate handshake message
+    message = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id,
+                                                                                   receiver_id=self.login.id)
+    if message is None:
+        print(&#34;No handshake message found&#34;)
+        return None
+
+    # Perform Diffie-Hellman to get Shared Key
+    DH1 = diffie_hellman(self.spk.private_key, message.sender_ik)
+    DH2 = diffie_hellman(self.ik.private_key, message.sender_ek)
+    DH3 = diffie_hellman(self.spk.private_key, message.sender_ek)
+    DH4 = b&#34;&#34;
+    if message.opk_used:
+        opk_priv = None
+        for i, opk in enumerate(self.opk):
+            if opk.public_key == message.opk_used:
+                opk_priv = opk.private_key
+                del self.opk[i]
+                break
+        DH4 = diffie_hellman(opk_priv, message.sender_ek)
+
+    # Calculate the shared key
+    SK = key_derivation(DH1 + DH2 + DH3 + DH4)
+
+    # Calculate the associated data
+    ad = message.sender_ik + self.ik.public_key
+    msg = self._check_associated_data(message=message.message, associated_data=ad, shared_key=SK)
+    if msg is None:
+        print(&#34;Failed to complete handshake: Unable to decrypt secret message&#34;)
+        return None
+    else:
+        decoded_message = msg.decode(&#39;ASCII&#39;)
+        self.sk[id] = SK
+    # Remove keys used from the message
+    message.sender_ik = None
+    message.sender_ek = None
+    message.opk_used = None
+    message.message = encrypt_message(decoded_message, SK)
+    self.public_key_repository.session.commit()
+    print(&#39;Handshake completed with user {}&#39;.format(id))</code></pre>
+</details>
+</dd>
+<dt id="X3DH.User.User.get_message_by_sender"><code class="name flex">
+<span>def <span class="ident">get_message_by_sender</span></span>(<span>self, sender_id: int, receiver_id: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets all of the messages sent between the users with ids sender_id and receiver_id.
+sender_id is settable for demonstration purpose.
+:param sender_id: the id of the sender (typically the id of the user who is logged in)
+:param receiver_id: the id of the receiver
+:return: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_message_by_sender(self, sender_id: int, receiver_id: int):
+    &#34;&#34;&#34;
+    Gets all of the messages sent between the users with ids sender_id and receiver_id.
+    sender_id is settable for demonstration purpose.
+    :param sender_id: the id of the sender (typically the id of the user who is logged in)
+    :param receiver_id: the id of the receiver
+    :return: None
+    &#34;&#34;&#34;
+    if receiver_id == &#39;&#39;:
+        receiver_id = self.login.id
+    else:
+        receiver_id = int(receiver_id)
+    if sender_id not in self.sk and receiver_id not in self.sk and receiver_id == self.login.id:
+        # Check if there is a pending handshake from sender
+        handshake_message = self.message_repository.get_handshake_message_by_sender_and_receiver(
+            sender_id=sender_id, receiver_id=self.login.id)
+        if handshake_message:
+            # Complete handshake if there is a pending handshake
+            print(&#34;Pending handshake from user {} found. Completing handshake...&#34;.format(sender_id))
+            self.complete_handshake(id=sender_id)
+
+    if sender_id in self.sk:
+        key = self.sk[sender_id]
+    elif receiver_id in self.sk:
+        key = self.sk[receiver_id]
+    else:
+        key = KeyPair.generate_key_pair().public_key
+
+    messages = self.message_repository.get_messages(sender_id=sender_id, receiver_id=receiver_id)
+    if not messages:
+        print(&#34;No messages found&#34;)
+    else:
+        print(&#34;Sender     Time            Message&#34;)
+        print(40 * &#34;-&#34;)
+        for message in messages:
+            msg = message.message
+            if message.sender_id == self.login.id and message.sender_ik:
+                print(&#34;{}: {} -&gt; PENDING HANDSHAKE MESSAGE&#34;.format(message.sender_id, message.timestamp))
+            else:
+                decrypted_message = decrypt_message(msg, key)
+                print(&#34;{}: {} -&gt; {}&#34;.format(message.sender_id, message.timestamp, decrypted_message))</code></pre>
+</details>
+</dd>
+<dt id="X3DH.User.User.initiate_handshake"><code class="name flex">
+<span>def <span class="ident">initiate_handshake</span></span>(<span>self, id: int, m: str = 'handshake', use_opk: bool = True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates a Shared Key, SK using the public key bundle
+:param m:
+:param use_opk:
+:param id: Use the pre-key
+:return: relevant data for first message</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def initiate_handshake(self, id: int, m: str = &#34;handshake&#34;, use_opk: bool = True):
+    &#34;&#34;&#34;
+    Generates a Shared Key, SK using the public key bundle
+    :param m:
+    :param use_opk:
+    :param id: Use the pre-key
+    :return: relevant data for first message
+    &#34;&#34;&#34;
+    if id == self.login.id:
+        print(&#34;Handshake failed: Cannot handshake with self&#34;)
+        return
+    if self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=id,
+                                                                            receiver_id=self.login.id):
+        print(&#34;Handshake already initiated by {}. Completing handshake...&#34;.format(id))
+        self.complete_handshake(id=id)
+        return
+    ec_public_key, opk = self._retrieve_key_bundle_for_handshake_by_id(id=id)
+    if ec_public_key is None:
+        print(&#34;Handshake failed: Unable to retrieve key bundle for user {}&#34;.format(id))
+        return
+
+    # Local vars
+    ik_b = ec_public_key.ik
+    spk_b = ec_public_key.spk
+    spk_sig_b = ec_public_key.spk_sig
+
+    # Verity the signature
+    if not XEdDSA25519(mont_pub=ik_b).verify(
+            spk_b,
+            spk_sig_b
+    ):
+        print(&#34;The signature of this public bundle&#39;s spk could not be verified&#34;)
+        return
+
+    EK = KeyPair.generate_key_pair()
+    DH1 = diffie_hellman(self.ik.private_key, spk_b)
+    DH2 = diffie_hellman(EK.private_key, ik_b)
+    DH3 = diffie_hellman(EK.private_key, spk_b)
+    DH4 = b&#34;&#34;
+
+    opk_payload = None  # opk to send in message
+    if use_opk:
+        if opk:
+            DH4 = diffie_hellman(EK.private_key, opk)
+            opk_payload = opk
+        else:
+            print(&#34;Use opk is active but no opk is found&#34;)
+            return
+
+    # Create the shared key
+    SK = key_derivation(DH1 + DH2 + DH3 + DH4)
+
+    # Calculate the associated data
+    ad = self.ik.public_key + ik_b
+
+    # Encrypt initial message with the shared key, including the associated data
+    cryptor = AEAD(b64encode(SK))
+    msg = cryptor.encrypt(bytes(m, &#39;ASCII&#39;), ad)
+    existing_handshake = self.message_repository.get_handshake_message_by_sender_and_receiver(
+        sender_id=self.login.id, receiver_id=id)
+    if existing_handshake is None:
+        message = Message(receiver_id=ec_public_key.id,
+                          sender_id=self.login.id,
+                          sender_ik=self.ik.public_key,
+                          sender_ek=EK.public_key,
+                          opk_used=opk_payload,
+                          message=msg)
+
+        # Post message to server with the correct key bundle
+        self.message_repository.insert_message(message=message)
+    else:
+        existing_handshake.sender_ek = EK.public_key
+        existing_handshake.opk_used = opk_payload
+        existing_handshake.message = msg
+        self.message_repository.session.commit()
+    self.sk[ec_public_key.id] = SK
+    print(&#39;Handshake initiated with user {}&#39;.format(id))</code></pre>
+</details>
+</dd>
+<dt id="X3DH.User.User.load_keys"><code class="name flex">
+<span>def <span class="ident">load_keys</span></span>(<span>self, filename: str) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Loads public and private keys that were stored in a file
+:param filename: file to load keys
+:return: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_keys(self, filename: str) -&gt; None:
+    &#34;&#34;&#34;
+    Loads public and private keys that were stored in a file
+    :param filename: file to load keys
+    :return: None
+    &#34;&#34;&#34;
+
+    with open(filename, &#39;r&#39;) as f:
+        text = f.read().split(&#34;\n&#34;)
+        ik = text[0].split(&#34;,&#34;)[1:]
+        spk = text[1].split(&#34;,&#34;)[1:]
+        opks = text[2].split(&#34;,&#34;)[1:]
+        sks = text[3].split(&#34;,&#34;)[1:]
+        self.ik = KeyPair(private_key=b64decode(ik[0].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True),
+                          public_key=b64decode(ik[1].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True))
+        self.spk = KeyPair(private_key=b64decode(spk[0].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True),
+                           public_key=b64decode(spk[1].encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True))
+        for opk in opks:
+            priv, pub = opk.split()
+            self.opk.append(KeyPair(b64decode(priv.encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True),
+                                    b64decode(pub.encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True)))
+        for sk in sks:
+            user, key = sk.split()
+            self.sk[int(user)] = b64decode(key.encode(&#34;ASCII&#34;, errors=&#34;strict&#34;), validate=True)</code></pre>
+</details>
+</dd>
+<dt id="X3DH.User.User.publish_keys"><code class="name flex">
+<span>def <span class="ident">publish_keys</span></span>(<span>self, opk_count)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Publishes a bundle of public keys to the server. Can be used to publish a new
+:param opk_count: Number of One time pre-keys to create when the public key bundle is published
+:return: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def publish_keys(self, opk_count):
+    &#34;&#34;&#34;
+    Publishes a bundle of public keys to the server. Can be used to publish a new
+    :param opk_count: Number of One time pre-keys to create when the public key bundle is published
+    :return: None
+    &#34;&#34;&#34;
+    spk_sig = XEdDSA25519(mont_priv=self.ik.private_key).sign(self.spk.public_key)
+    ec_public_key = ECPublicKey(self.login.id, self.ik.public_key, self.spk.public_key, spk_sig)
+
+    # CASE New SPK: Verify that the IK of the new bundle matches that of the one on the server
+    existing_pkey_bundle = self.public_key_repository.get_public_key_bundle_by_id(self.login.id)
+    if existing_pkey_bundle is not None and self.ik.public_key != existing_pkey_bundle.ik:
+        print(&#34;Identity key cannot be changed!&#34;)
+        return None
+
+    # Add the number of OPKs specified by opk_count. Add those OPKs to the user&#39;s list of opks.
+    self.max_opk = opk_count
+    while opk_count &gt; 0:
+        ot_pkey_set = KeyPair.generate_key_pair()
+        self.opk.append(ot_pkey_set)  # Append KeyPair to list of opks
+        ec_public_key.opks.append(OT_PKey(opk=ot_pkey_set.public_key))
+        opk_count -= 1
+
+    if self.login is not None:
+        # Insert public keys into table
+        self.public_key_repository.insert_public_key_bundle(ec_public_key=ec_public_key)
+    else:
+        print(&#34;Failed to login.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="X3DH.User.User.save_keys"><code class="name flex">
+<span>def <span class="ident">save_keys</span></span>(<span>self, filename: str) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Saves the public and private identity and pre-keys to a file
+:param filename: file to save the keys
+:return:None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_keys(self, filename: str) -&gt; None:
+    &#34;&#34;&#34;
+    Saves the public and private identity and pre-keys to a file
+    :param filename: file to save the keys
+    :return:None
+    &#34;&#34;&#34;
+
+    text = &#34;&#34;
+    text += &#34;identity-key,{},{}\n&#34;.format(b64encode(self.ik.private_key).decode(&#34;ASCII&#34;),
+                                          b64encode(self.ik.public_key).decode(&#34;ASCII&#34;))
+    text += &#34;pre-key,{},{}\n&#34;.format(b64encode(self.spk.private_key).decode(&#34;ASCII&#34;),
+                                     b64encode(self.spk.public_key).decode(&#34;ASCII&#34;))
+    text += &#34;one-time-key&#34;
+    for opk in self.opk:
+        text += &#34;,{} {}&#34;.format(b64encode(opk.private_key).decode(&#34;ASCII&#34;),
+                                b64encode(opk.public_key).decode(&#34;ASCII&#34;))
+    text += &#34;\nsecret-key&#34;
+    for user, key in self.sk.items():
+        text += &#34;,{} {}&#34;.format(user,
+                                b64encode(key).decode(&#34;ASCII&#34;))
+    with open(filename, &#39;w&#39;) as f:
+        f.write(text)</code></pre>
+</details>
+</dd>
+<dt id="X3DH.User.User.send_message"><code class="name flex">
+<span>def <span class="ident">send_message</span></span>(<span>self, receiver_id: int, m: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sends a message to the specified user, encrypted with the derived shared key
+:param receiver_id: the id of the receiver
+:param m: the message
+:return: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def send_message(self, receiver_id: int, m: str):
+    &#34;&#34;&#34;
+    Sends a message to the specified user, encrypted with the derived shared key
+    :param receiver_id: the id of the receiver
+    :param m: the message
+    :return: None
+    &#34;&#34;&#34;
+    if receiver_id not in self.sk:
+        # Perform handshake if sk doesn&#39;t exist with receiver
+        handshake_msg = self.message_repository.get_handshake_message_by_sender_and_receiver(sender_id=receiver_id,
+                                                                                             receiver_id=self.login.id)
+        if handshake_msg:
+            # Complete handshake if there is pending handshake from receiver
+            print(&#34;Pending handshake from user {} found. Completing handshake...&#34;.format(receiver_id))
+            self.complete_handshake(receiver_id)
+        else:
+            # Initiate handshake with intended message if there is no pending handshake from receiver
+            print(&#34;No key agreement found with user {}. Initiating handshake...&#34;.format(receiver_id))
+            self.initiate_handshake(id=receiver_id, m=m)
+            return
+
+    sk = self.sk[receiver_id]
+    encrypted_msg = encrypt_message(m, sk)
+    message = Message(receiver_id=receiver_id,
+                      sender_id=self.login.id,
+                      sender_ik=None,
+                      sender_ek=None,
+                      opk_used=None,
+                      message=encrypted_msg)
+    self.message_repository.insert_message(message=message)
+    print(&#34;Message sent&#34;)</code></pre>
+</details>
+</dd>
+<dt id="X3DH.User.User.set_keys"><code class="name flex">
+<span>def <span class="ident">set_keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets the keys for a new user
+:return: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_keys(self):
+    &#34;&#34;&#34;
+    Sets the keys for a new user
+    :return: None
+    &#34;&#34;&#34;
+    self.ik = KeyPair.generate_key_pair()
+    self.spk = KeyPair.generate_key_pair()</code></pre>
+</details>
+</dd>
+<dt id="X3DH.User.User.set_spk"><code class="name flex">
+<span>def <span class="ident">set_spk</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets new SPKs for the user
+:return: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_spk(self):
+    &#34;&#34;&#34;
+    Sets new SPKs for the user
+    :return: None
+    &#34;&#34;&#34;
+    self.spk = KeyPair.generate_key_pair()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="X3DH" href="index.html">X3DH</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="X3DH.User.User" href="#X3DH.User.User">User</a></code></h4>
+<ul class="">
+<li><code><a title="X3DH.User.User.complete_handshake" href="#X3DH.User.User.complete_handshake">complete_handshake</a></code></li>
+<li><code><a title="X3DH.User.User.get_message_by_sender" href="#X3DH.User.User.get_message_by_sender">get_message_by_sender</a></code></li>
+<li><code><a title="X3DH.User.User.initiate_handshake" href="#X3DH.User.User.initiate_handshake">initiate_handshake</a></code></li>
+<li><code><a title="X3DH.User.User.load_keys" href="#X3DH.User.User.load_keys">load_keys</a></code></li>
+<li><code><a title="X3DH.User.User.publish_keys" href="#X3DH.User.User.publish_keys">publish_keys</a></code></li>
+<li><code><a title="X3DH.User.User.save_keys" href="#X3DH.User.User.save_keys">save_keys</a></code></li>
+<li><code><a title="X3DH.User.User.send_message" href="#X3DH.User.User.send_message">send_message</a></code></li>
+<li><code><a title="X3DH.User.User.set_keys" href="#X3DH.User.User.set_keys">set_keys</a></code></li>
+<li><code><a title="X3DH.User.User.set_spk" href="#X3DH.User.User.set_spk">set_spk</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
