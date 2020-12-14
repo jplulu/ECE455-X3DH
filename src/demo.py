@@ -28,7 +28,7 @@ def demo():
                     try:
                         user.load_keys(bundle)
                         break
-                    except:
+                    except FileNotFoundError:
                         print("Invalid file.")
                         continue
                 logged_in(user, bundle)

@@ -6,6 +6,9 @@ from sqlalchemy import Integer, Column, ForeignKey, create_engine, BLOB, MetaDat
 from sqlalchemy.types import Text, JSON, LargeBinary, String
 from sqlalchemy.orm import sessionmaker, relationship
 
+# local imports
+from src import engine
+
 Base = declarative_base()
 
 
@@ -78,8 +81,6 @@ class Login(Base):
 
 
 if __name__ == "__main__":
-    # engine = create_engine('mysql://root:password@localhost/keybundle')  # connect to server
-    engine = create_engine('mysql://root:123456@localhost/keybundle')  # connect to server
     engine.execute("DROP DATABASE keybundle;")
     engine.execute("CREATE DATABASE keybundle;")
     engine.execute("USE keybundle;")
