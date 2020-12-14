@@ -194,7 +194,6 @@ class User:
         message.opk_used = None
         message.message = encrypt_message(decoded_message, SK)
         self.message_repository.session.commit()
-        self.public_key_repository.session.commit()
         print('Handshake completed with user {}'.format(id))
 
     def send_message(self, receiver_id: int, m: str):
