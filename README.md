@@ -8,7 +8,7 @@ To install the packages, run:
 
 ```pip install -r requirements.txt```
 
-If you are using Windows, you will run into an issue with install XEdDSA.
+If you are using Windows, you will run into an issue when installing XEdDSA.
 
 To get around the problem, you will have to download MinGW and CMake. MinGW\bin and CMake\bin must be put on your path before you attempt to install again. Next, download the zip file `libsodium-1.0.18-stable-msvc.zip` from the repository. Unzip and take the file `libsodium.dll` from `libsodium\x64\Release\v142\dynamic` and move it to `system32`.
 
