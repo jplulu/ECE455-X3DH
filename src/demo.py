@@ -1,13 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import models
+from src.models import *
 from src.repository import UserRepository, PublicKeyRepository
 from src.User import User
 
 user_repo = UserRepository()
 
 
-def Demo():
+def demo():
     while True:
         choice = input("(1) Login \n(2) Register\n(3) Exit\n")
         if choice != "1" and choice != "2" and choice != "3":
@@ -127,5 +127,3 @@ def logged_in(user, key_filename=None):
             print("Invalid Choice")
 
 
-if __name__ == '__main__':
-    LoginRegister()

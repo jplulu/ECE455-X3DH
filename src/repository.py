@@ -2,7 +2,7 @@ from __future__ import annotations
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker
 from typing import List
-from models import ECPublicKey, OT_PKey, Message, Login
+from src.models import ECPublicKey, OT_PKey, Message, Login
 from sqlalchemy.exc import IntegrityError
 
 # engine = create_engine('mysql://root:password@localhost/keybundle')  # connect to server

@@ -3,10 +3,10 @@ from base64 import b64encode, b64decode
 from aead import AEAD
 
 # Local imports
-from models import ECPublicKey, OT_PKey, Message
-from util import diffie_hellman, key_derivation, decrypt_message, encrypt_message
-from repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository, UserRepository
-from KeyPair import KeyPair
+from src.models import ECPublicKey, OT_PKey, Message
+from src.util import diffie_hellman, key_derivation, decrypt_message, encrypt_message
+from src.repository import PublicKeyRepository, OneTimeKeyRepository, MessageRepository, UserRepository
+from src.KeyPair import KeyPair
 
 
 class User:
