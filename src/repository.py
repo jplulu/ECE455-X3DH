@@ -6,10 +6,10 @@ from sqlalchemy.exc import IntegrityError
 
 # Local imports
 from src.models import ECPublicKey, OT_PKey, Message, Login
-# from src import engine
+from src import engine
 
 # engine = create_engine('mysql://root:password@localhost/keybundle')  # connect to server
-engine = create_engine('mysql://root:123456@localhost/keybundle')  # connect to server
+# engine = create_engine('mysql://root:123456@localhost/keybundle')  # connect to server
 Session = sessionmaker(bind=engine)
 session = Session()
 
