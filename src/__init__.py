@@ -13,7 +13,11 @@ Base = declarative_base()
 if "-p" in argv and "-u" in argv:
     user = argv[argv.index("-u")+1]
     password = argv[argv.index("-p")+1]
-    engine = create_engine('mysql://{}:{}@localhost/keybundle'.format(user, password))  # connect to server
+    if "src.models" in sys.argv:
+        engine = create_engine('mysql://{}:{}@localhost/'.format(user, password))  # connect to server
+    else:
+        engine = create_engine('mysql://{}:{}@localhost/keybundle'.format(user, password))  # connect to server
+
     try:
         engine.connect()
     except OperationalError:

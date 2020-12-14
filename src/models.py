@@ -5,6 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Integer, Column, ForeignKey, create_engine, BLOB, MetaData
 from sqlalchemy.types import Text, JSON, LargeBinary, String
 from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.exc import OperationalError
 
 # local imports
 from src import engine
@@ -81,7 +82,10 @@ class Login(Base):
 
 
 if __name__ == "__main__":
-    engine.execute("DROP DATABASE keybundle;")
+    try:
+        engine.execute("DROP DATABASE keybundle;")
+    except OperationalError:
+        pass
     engine.execute("CREATE DATABASE keybundle;")
     engine.execute("USE keybundle;")
     Base.metadata.create_all(engine)
