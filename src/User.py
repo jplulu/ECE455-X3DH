@@ -1,3 +1,4 @@
+from datetime import datetime
 from xeddsa.implementations import XEdDSA25519
 from base64 import b64encode, b64decode
 from aead import AEAD
@@ -135,7 +136,8 @@ class User:
                               sender_ik=self.ik.public_key,
                               sender_ek=EK.public_key,
                               opk_used=opk_payload,
-                              message=msg)
+                              message=msg,
+                              timestamp=datetime.now())
 
             # Post message to server with the correct key bundle
             self.message_repository.insert_message(message=message)
@@ -223,7 +225,8 @@ class User:
                           sender_ik=None,
                           sender_ek=None,
                           opk_used=None,
-                          message=encrypted_msg)
+                          message=encrypted_msg,
+                          timestamp=datetime.now())
         self.message_repository.insert_message(message=message)
         self.message_repository.session.commit()
         print("Message sent")
